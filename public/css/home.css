@@ -1,0 +1,274 @@
+*, *:active, *:hover {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+h1 {
+	font-size: 1.5em;
+}
+h2 {
+	font-size: 1.4em;
+}
+input {
+	outline: none;
+}
+.relative {
+	position: relative;
+}
+.validation-message {
+	position: absolute;
+	top:23px;
+	left: -605px;
+	width: 600px;
+	height: 32px;
+}
+.validation-message img {
+	height: auto;
+	width: 18px;
+	margin: 7px -2px 7px 0;
+}
+.for_birth, .for_gender {
+	top: 0;
+}
+.float-right {
+	float: right;
+	height: 100%;
+}
+#toHome {
+	text-decoration: none;
+	color: lawngreen;
+	font-size: 1.1em;
+}
+.alert-danger {
+	color: #a94442;
+	border: 1px solid #ebccd1;
+	background-color: #f2dede;
+	margin-bottom: 10px;
+	border-radius: 5px;
+	padding: 5px;
+}
+.wrap {
+	min-height: 100vh;
+	height: auto;
+}
+.head {
+	height: 42px;
+	border-bottom: 2px solid lawngreen;
+}
+.footer {
+	border-top: 2px solid lawngreen;
+}
+.head, .footer {
+	background-color: black;
+}
+.content {
+	min-height: calc(100vh - 42px);
+	height: auto;
+	min-width: 960px;
+	/* background: linear-gradient(to bottom, #fff, #668cff);
+	/* http://bgfons.com/upload/leather_texture386.jpg */
+	/* https://a.wattpad.com/userbg/iErrored.89798.jpg */
+	background: url('/bg_image.jpg') no-repeat 50% 50%;
+	-webkit-background-size: cover;
+	background-size: cover;
+}
+.head_inner, .content_inner, .footer_inner {
+	height: 100%;
+	width: 960px;
+	min-width: 960px;
+	margin: 0 auto;
+	display: flex;
+}
+.head_inner {
+	padding: 7px 0;
+}
+.hlogo {
+	display: flex;
+	height: 28px;
+	flex: 0 0 40%;
+}
+.hlogo_inner {
+	margin: auto 0;
+	color: lawngreen;
+	font-weight: bold;
+}
+.search {
+	height: 28px;
+	flex: 0 0 60%;
+}
+.search_form {
+	height: 100%;
+	float: right;
+}
+.search_form input, .search_form button {
+	height: 100%;
+}
+.search_form input {
+	margin-right: 10px;
+	padding: 2px 8px;
+	border: 1px solid lawngreen;
+	border-radius: 8px;
+}
+.search_form button {
+	padding: 0 8px;
+	font-size: 1em;
+	border: 1px solid lawngreen;
+	border-radius: 8px;
+	background-color: lawngreen;
+}
+.search_form button:hover {
+	background: linear-gradient(to top, rgba(51, 255, 51, 0.27), lawngreen);
+}
+.leftCol {
+	flex: 0 0 640px;
+	padding: 20px 40px 20px 0;
+}
+.leftCol_inner {
+	padding-top: 20px;
+	width: 600px;
+}
+.leftCol_inner h2 {
+	text-align: center;
+	margin-bottom: 40px;
+}
+.img-fluid {
+	height: auto;
+	width: 100%;
+}
+.alignCenter {
+	width: 100%;
+	padding: 80px 40px;
+}
+.reset_pwd {
+	width: 320px;
+	margin: 0 auto;
+	border: lawngreen 2px solid;
+	border-radius: 5px;
+	padding: 25px 25px 0 25px;
+	background-color: #fff;
+}
+.rightCol {
+	padding-top: 20px;
+	padding-bottom: 20px;
+	flex: 0 0 320px;
+}
+.rightCol_inner {
+	padding-top: 20px;
+	max-width: 100%;
+}
+.logIn, .signIn {
+	background-color: #fff;
+	border: 1px solid lawngreen;
+	border-radius: 3px 3px 6px 6px;
+	padding: 25px 25px 0 25px;
+	max-width: 100%;
+}
+.logIn > form, .signIn > form {
+	max-width: 100%;
+}
+.logIn {
+	margin-bottom: 30px;
+}
+.logIn a {
+	text-decoration: none;
+	color: black;
+}
+.logIn a:hover {
+	color: green;
+}
+.logIn input, .signIn input, .reset_pwd input {
+	margin-bottom: 15px;
+	width: 100%;
+	padding: 6px 12px 8px 12px;
+	border: 1px solid grey;
+	border-radius: 10px;
+}
+.last_panel {
+	display: flex;
+}
+.checkbox {
+	display: flex;
+	margin-left: 20px;
+}
+.checkbox label {
+	display: flex;
+	cursor: pointer;
+}
+.checkbox_box {
+	width: 20px!important;
+	margin-right: 5px;
+	margin-bottom: auto!important;
+	margin-top: auto;
+}
+.logIn button, .signIn button, .reset_pwd button {
+	width: calc(100% + 52px);
+	height: 30px;
+	color: black;
+	font-size: 1.2em;
+	margin: 10px -26px -1px -26px;
+	border: none;
+	border-radius: 0 0 5px 5px;
+	background-color: lawngreen;
+}
+.logIn button:focus, .signIn button:focus, .reset_pwd button:focus {
+	outline: none;
+}
+.logIn button:hover, .signIn button:hover, .reset_pwd button:hover {
+	background: linear-gradient(to top, rgba(5, 86, 5, 0.87), lawngreen);
+}
+.birthday {
+	margin-bottom: 15px;
+}
+.birthday select {
+	padding: 6px;
+}
+.day, .year {
+	
+}
+.month {
+	width: 98px;
+	margin: 0 18px 0 14px;
+}
+.gender {
+	display: flex;
+	height: 32px;
+}
+.male, .female {
+	flex: 0 0 134px;
+	margin: auto 0;
+}
+.gender input{
+	width: 30px;
+	margin: auto 0;
+}
+.flogo, .links, .lang {
+	flex: 0 0 320px;
+	padding: 3px;
+}
+.footer a {
+	text-decoration: none;
+	color: lawngreen;
+	font-size: 1.05em;
+}
+.footer a:hover {
+	color: #fff;
+}
+.lang p {
+	color: #fff;
+	margin-right: 10px;
+}
+.lang a {
+	margin-right: 5px;
+}
+.links_inner {
+	white-space: nowrap;
+	text-align: center;
+}
+.links_inner a {
+	margin-right: 10px;
+}
+.lang_inner {
+	display: flex;
+	float: right;
+}
