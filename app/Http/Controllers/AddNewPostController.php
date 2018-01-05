@@ -10,43 +10,58 @@ use App\User;
 class AddNewPostController extends Controller 
 {
 	public function addPost(Request $request)
-	{
-		$insert = $_FILES['photos']['name'];
+	{	
+		$extension = [];
+		$posts = [];
 
-		/*$message		= $request->input('message');
-		$author_id		= $request->input('author_id');
-		$photos			= $_FILES['photos'];
+		/*for($i=0;$i<count($list_of_files);$i++)
+		{
+			$filename = explode('.', $list_of_files[$i]);
+			$extension[$i] = end($filename);
+		}
+
+		print_r($extension);*/
+
+		$message		= $request->input('message');
+		$user_id		= $request->input('user_id');
+		$photos			= $request->input('files');
 		$attachments	= $request->input('attachments');
 
-		$author = User::where('id',$author_id)->select('id','surname','name','avatar')->get();
+		$post = new Post;
 
-		$new_post = [
-			'author' 	=> $author[0],
-			'message' 	=> $message
-		];
+		$post->user_id = $user_id;
+		$post->text = $message;
 
 		if($photos != null)
 		{
-
-			$new_post['photos'] = $photos['name'];
+			$post->photos = $photos;
 		}
-
 		if($attachments != null)
 		{
-			$new_post['attachments'] = $attachments;
-		}*/
+			$post->attachments = $attachments;
+		}
 
-		/*$post = new Post;
+		$post->save();
 
-		$post->text = $message;
-		$post->author_id = $author_id;
-		$post->save();*/
+		$user = User::where('id',$user_id)->select('id','surname','name','avatar')->get();
 
-		/*$insert = view('addnewpost', [
-			'new_post' => $new_post
-		]);*/
+		$new_post = (object) [];
 
-		echo $insert;
+		$new_post->id = $user[0]->id;
+		$new_post->surname = $user[0]->surname;
+		$new_post->name = $user[0]->name;
+		$new_post->avatar = $user[0]->avatar;
+		$new_post->creation_date = 'Менее минуты назад';
+		$new_post->text = $message;
 
+		if($photos != null) $new_post->photos = json_decode($photos);
+
+		array_push($posts,$new_post);
+
+		$result = view('post', [
+			'posts' => $posts
+		]);
+
+		echo $result;
 	}
 }

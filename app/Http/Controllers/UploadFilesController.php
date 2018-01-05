@@ -7,11 +7,17 @@ use SplFileInfo;
 
 class UploadFilesController extends Controller
 {
+	/**
+	 ******************************************************************************************
+	 *	Function saves file on path "downloads/user_id/hash/hash/hash.jpg" (any file extension)
+	 *	
+	 *	@param  $request
+	 *	@return $path_from_root	(It's path where file was saved)
+	 ******************************************************************************************
+	 **/
 	public function uploadFiles(Request $request)
 	{
 		$user_id = $request->get('user_id');
-		/*$data = file_get_contents($_FILES['userfile']['tmp_name']);
-		file_put_contents('downloads/'.$user_id.'/'.substr(md5($_FILES['userfile']['name']),0,2).'.jpeg', $data);*/
 		
 		$filename = $_FILES['userfile']['name'];
 

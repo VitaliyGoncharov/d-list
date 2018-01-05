@@ -17,8 +17,8 @@
                 <div class="hlogo_inner">
 
                     <h1>
-                        <img src="{{ Auth::user()->avatar }}" class="add_post_author_photo" alt="">
-                        {{ Auth::user()->name }}
+                        <img src="{{ Auth::user()->avatar }}" class="user_avatar_mini" alt="">
+                        <span class="username">{{ Auth::user()->name }}</span>
                     </h1>
                 </div>
             </div>
@@ -57,12 +57,12 @@
             <!-- Center column -->
             <div class="centerCol">
                 <div class="centerCol_inner" id="az">
-                    <div class="add_new_post" id="add_post">
+                    <div class="addNewPost">
                         <div class="add_text">
-                            <img src="{{ Auth::user()->avatar }}" class="add_post_author_photo" alt="">
+                            <img src="{{ Auth::user()->avatar }}" class="user_avatar_mini" alt="">
                             <div class="comment_size" id=""></div>
-                            <textarea name="comment_author_textarea" id="comment_author_textarea" rows="1" placeholder="Добавить пост"></textarea>
-                            <span id="author_id">{{ Auth::user()->id }}</span>
+                            <textarea name="comment_author_textarea" id="comment_author_textarea" class="newPostMessage" rows="1" placeholder="Добавить пост"></textarea>
+                            <span id="user_id">{{ Auth::user()->id }}</span>
 
                             <div class="smileys">
                                 <img src="https://image.flaticon.com/icons/svg/187/187142.svg" alt="">
@@ -70,96 +70,22 @@
                         </div>
                         
 
-                        <div class="attach_something">
-                            <div class="attach_options">
+                        <div class="attachSomething">
+                            <div class="attachOptions">
                                 <i class="fa fa-camera" aria-hidden="true" onclick="clickUpload(this);"></i>
                                 <i class="fa fa-file" aria-hidden="true" onclick="clickUpload(this);"></i>
                                 <input type="file" id="upload" accept="" multiple>
                             </div>
                             
-                            <div class="send">
-                                <button type="submit" id="send_post" onclick="addPost();">Запостить</button>
+                            <div class="addPostBut">
+                                <button type="submit" id="addPostBut" onclick="">Запостить</button>
                             </div>
                         </div>
                     </div>
 
                     {{ csrf_field() }}
 
-                    @if(isset($posts))
-                        @foreach($posts as $post)
-                            <div class="post" id="4">
-                                <div class="post_head">
-                                    <img src="{{ $post->avatar }}" class="author_img" alt="">
-
-                                    <div class="post_info">
-                                        <h5><a href="#" class="author">{{ $post->surname }} {{ $post->name }}</a></h5>
-                                        <span class="when">{{ $post->creation_date }}</span>
-                                    </div>
-
-                                    <div class="option">
-                                        <i class="fa fa-ellipsis-h" aria-hidden="true"></i>
-                                    </div>
-                                </div>
-
-                                <div class="post_content">
-                                    <div class="post_text">
-                                        {{ $post->text }}
-                                    </div>
-
-                                    @if(isset($post->photos))
-                                    <div class="post_photo">
-                                        <img src="{{ $post->photos }}" class="post_photo_inner" alt="">
-                                    </div>
-                                    @endif
-
-                                    <div class="post_media">
-
-                                    </div>
-
-                                    <div class="post_likes">
-                                        <div class="likes">
-                                            <i id="like" class="fa fa-thumbs-up" aria-hidden="true"></i>
-                                            <span>{{ $post->thumb }}</span>
-                                        </div>
-
-                                        <div class="share">
-                                            <i id="share" class="fa fa-bullhorn" aria-hidden="true"></i>
-                                            <span>4</span>
-                                        </div>
-
-                                        <div class="comment">
-                                            <i id="comment" class="fa fa-comment" aria-hidden="true"></i>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                @if(isset($post->comment))
-                                    <div class="post_comments">
-                                        <div class="post_comment">
-                                            <div id="post_id">2</div>
-                                            <div id="user_id">3</div>
-                                            <img src="{{ $post->comment->avatar }}" class="post_commenter_photo" alt="">
-
-                                            <div class="post_comment_author">
-                                                <h5><a href="#" class="comment_author_a">{{ $post->comment->surname }} {{ $post->comment->name }}</a></h5>
-
-                                                <div class="post_comment_content">
-                                                    {{ $post->comment->comment }}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                @endif
-
-                                <div class="add_comment">
-                                    <img src="{{ Auth::user()->avatar }}" class="add_post_author_photo" alt="">
-                                    <div class="comment_size" id=""></div>
-                                    <textarea name="comment_author_textarea" id="comment_author_textarea" rows="1" placeholder="Оставить комментарий"></textarea>
-                                    <span id="test"></span>
-                                </div>
-                            </div>
-                        @endforeach
-                    @endif
+                    @include('post')
 
                 </div>
             </div>
@@ -209,7 +135,8 @@
     </div> <!-- End of the footer_inner -->
 </div> <!-- End of the footer -->
 
-<script src="{{ asset('js/jquery-3.2.1.js') }}"></script>
-<script src="{{ asset('js/main.js') }}"></script>
+<script src="{{ asset('js/jquery-3.2.1.js') }}" defer></script>
+<script src="{{ asset('js/gallery.js') }}" defer></script>
+<script src="{{ asset('js/main.js') }}" defer></script>
 </body>
 </html>

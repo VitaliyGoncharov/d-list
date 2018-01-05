@@ -3,6 +3,19 @@
 	padding: 0;
 	box-sizing: border-box;
 }
+.clearfix {
+	display: block;
+}
+.clearfix:after {
+	content: "";
+	display: block;
+	clear: both;
+	visibility: hidden;
+	line-height: 0;
+	height: 0;
+	margin: 0;
+	padding: 0;
+}
 h1, h2, h3, h4, h5 {
 	font-family: Arial;
 }
@@ -29,6 +42,18 @@ a {
 }
 a:hover {
 	text-decoration: underline;
+}
+.gp-gallery-picture-zoom {
+    border: 1px solid #bbb;
+    margin: -6px 0 0 -6px;
+    position: absolute;
+    z-index: 100;
+    padding: 5px;
+    background: white;
+    box-shadow: 0 0 10px #999;
+}
+.post_photo img:hover {
+    box-shadow: 1px 1px 5px #333;
 }
 .img-fluid {
 	height: auto;
@@ -83,7 +108,7 @@ a:hover {
 	font-weight: bold;
 }
 .search {
-	height: 28px;
+	height: 26px;
 	flex: 0 0 60%;
 }
 .search_form {
@@ -170,7 +195,7 @@ a:hover {
 	width: 600px;
 	padding: 20px 10px 0 10px;
 }
-.add_new_post {
+.addNewPost {
 	border: 2px solid lawngreen;
 	background-color: #fff;
 	margin-bottom: 15px;
@@ -200,18 +225,18 @@ a:hover {
 	right: 0;
 	width: 18px;
 }
-.attached_files {
+.attachedPhotosPreview {
 	margin: 0 -15px 0 -15px;
 	padding: 0 15px 5px 15px;
 	border-bottom: 1px solid rgba(103, 103, 226, 0.68);
 }
-.img_wrapper {
+.attachedPhotoWrap {
 	display: inline-block;
 	position: relative;
 	margin-top: 5px;
 	margin-right: 3px;
 }
-.attached_files img {
+.attachedPhotosPreview img {
 	width: auto;
 	height: 70px;
 	vertical-align: bottom;
@@ -226,11 +251,11 @@ a:hover {
 #upload {
 	display: none;
 }
-.attach_something {
+.attachSomething {
 	display: flex;
 	padding-top: 3px;
 }
-.attach_options {
+.attachOptions {
 	display: flex;
 	width: 480px;
 }
@@ -242,7 +267,8 @@ a:hover {
 .fa-camera:hover, .fa-file:hover {
 	color: #6eaf2f;
 }
-#send_post {
+#addPostBut {
+	outline: none;
 	border: 1px solid #46b8da;
 	border-radius: 8px;
 	height: auto;
@@ -251,14 +277,14 @@ a:hover {
 	color: #fff;
 	cursor: pointer;
 }
-#send_post:hover {
+#addPostBut:hover {
 	background-color: #31b0d5;
 }
-.uploading_file_progress {
+.uploadingFileProgress {
 	display: flex;
 	margin-bottom: 3px;
 }
-.progress_bar_wrapper {
+.progressBarWrap {
 	position: relative;
 }
 progress {
@@ -273,7 +299,7 @@ progress::-webkit-progress-bar {
 progress::-webkit-progress-value {
 	background-color: lawngreen; 
 }
-.uploading_progress_percents {
+.uploadingProgressPercents {
 	position: absolute;
 	top: 0;
 	right: 0;
@@ -282,7 +308,7 @@ progress::-webkit-progress-value {
 	margin: auto;
 	width: fit-content;
 }
-.uploading_filename {
+.uploadingFilename {
 	margin-left: 10px;
 }
 .post {
@@ -451,10 +477,11 @@ progress::-webkit-progress-value {
 	width: 480px;
 	padding-left: 16px;
 }
-.add_post_author_photo {
+.user_avatar_mini {
 	width: 28px;
 	height: 28px;
 	border-radius: 14px;
+	vertical-align: text-top;
 }
 #comment_author_textarea {
 	padding-left: 16px;

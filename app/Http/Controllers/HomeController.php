@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Post;
+use App\Http\Middleware\RedirectIfNotAuthenticated;
 use Illuminate\Http\Request;
 use DB;
 use App\Comment;
 use DateTime;
+use Auth;
 
 class HomeController extends Controller
 {
@@ -17,7 +19,7 @@ class HomeController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth');
+        $this->middleware(RedirectIfNotAuthenticated::class);
     }
 
     /**
@@ -27,17 +29,26 @@ class HomeController extends Controller
      */
     public function index(Request $request)
     {
+        $posts = $this->changePostDate($this->loadPosts(), $request);
 
+        return view('home', [
+            'posts' => $posts
+        ]);
+    }
 
-        $posts = Post::join('users', 'users.id', '=', 'posts.author_id')
+    public function loadPosts($num = 10)
+    {
+        $posts = Post::join('users', 'users.id', '=', 'posts.user_id')
             ->leftjoin('thumbs', 'thumbs.post_id', '=', 'posts.id')
             ->select('posts.*', 'users.surname', 'users.name', 'users.avatar', 'thumbs.thumb')
             ->orderBy('id', 'DESC')
-            ->take(10)
+            ->take($num)
             ->get();
 
         foreach($posts as $post)
         {
+            $post->photos = json_decode($post->photos);
+
             $comment = Comment::where('post_id', $post->id)
                 ->orderBy('created_at', 'DESC')
                 ->join('users', 'users.id', '=', 'comments.user_id')
@@ -52,6 +63,11 @@ class HomeController extends Controller
 
         }
 
+        return $posts;
+    }
+
+    public function changePostDate($posts, $request)
+    {
         $rus_months = [
             'января',
             'февраля',
@@ -199,9 +215,6 @@ class HomeController extends Controller
             $post->creation_date = $creation_date;
         }
 
-
-        return view('home', [
-            'posts' => $posts
-        ]);
+        return $posts;
     }
 }

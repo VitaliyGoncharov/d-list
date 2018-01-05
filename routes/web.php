@@ -47,6 +47,6 @@ Route::post('/logout', 'Auth\LogoutController@logout')->name('logout');
 
 Route::post('/checkuserinput', 'Auth\CheckUserInputController@checkUserInput');
 
-Route::post('/addnewpost', 'AddNewPostController@addPost');
-
 Route::post('/uploadfiles', 'UploadFilesController@uploadFiles');
+
+Route::post('/addpost','AddNewPostController@addPost');

@@ -37,7 +37,7 @@ class LoginController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('guest')->except('logout');
+        $this->middleware('guest');
     }
 
     public function showLoginForm(Request $request) {
@@ -66,7 +66,7 @@ class LoginController extends Controller
             $utc = $request->input('utc');
             $request->session()->put('utc', $utc);
             
-            return redirect()->route('home');
+            return redirect($this->redirectTo);
         }
 
         $errors = 'Ошибка авторизации';

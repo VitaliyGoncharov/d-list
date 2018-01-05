@@ -8,12 +8,13 @@ class SendMailController extends Controller
 {
     public function sendMailAction($email, $key, $user_id = null, $name = '', $surname = '')
     {
+        $domain = env('APP_URL');
         $this->email        = $email;
         $this->recipient    = "$name $surname";
         $this->subject      = $user_id ? 'Подтверждение регистрации' : 'Восстановление пароля';
         $this->view         = $user_id ? 'emails.sendActivateKey' : 'emails.sendResetKey';
 
-        $this->actLink = $user_id ? "http://devvit.ru/activate/$user_id/$key" : "http://devvit.ru/password/reset/$email/$key";
+        $this->actLink = $user_id ? "$domain/activate/$user_id/$key" : "http://devvit.ru/password/reset/$email/$key";
 
         
 

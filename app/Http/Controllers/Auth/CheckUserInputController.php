@@ -27,7 +27,7 @@ class CheckUserInputController extends Controller
             'email'     => [
                 'required',
                 'string',
-                'regex:~^([\w\d]{4,31})@([\w]{1,15})\.([\w]{1,15})$~u',
+                'regex:~^([\w\d\-\.\_]{4,31})@([\w]{1,15})\.([\w]{1,15})$~u',
                 Rule::unique('users')->where(function ($query) {
                     return $query->where('active', 1);
                 })
