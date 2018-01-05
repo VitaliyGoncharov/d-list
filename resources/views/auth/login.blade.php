@@ -18,7 +18,7 @@
         <div class="head_inner">
             <div class="hlogo">
                 <div class="hlogo_inner">
-                    <h1>D-chat</h1>
+                    <h1>D-list</h1>
                 </div>
             </div>
 
