@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateCommentsTable extends Migration
+class CreatePasswordResetTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,11 @@ class CreateCommentsTable extends Migration
      */
     public function up()
     {
-        Schema::create('comments', function (Blueprint $table) {
+        Schema::create('password_reset', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('comment',255);
-            $table->unsignedInteger('user_id');
-            $table->unsignedInteger('post_id');
-            $table->unsignedInteger('userRep_id')->nullable();
-            $table->dateTime('created_at');
+            $table->string('email')->index();
+            $table->string('token');
+            $table->date('send_date');
         });
     }
 
@@ -30,6 +28,6 @@ class CreateCommentsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('comments');
+        Schema::dropIfExists('password_reset');
     }
 }

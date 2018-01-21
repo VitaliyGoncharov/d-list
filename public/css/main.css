@@ -3,19 +3,6 @@
 	padding: 0;
 	box-sizing: border-box;
 }
-.clearfix {
-	display: block;
-}
-.clearfix:after {
-	content: "";
-	display: block;
-	clear: both;
-	visibility: hidden;
-	line-height: 0;
-	height: 0;
-	margin: 0;
-	padding: 0;
-}
 h1, h2, h3, h4, h5 {
 	font-family: Arial;
 }
@@ -42,6 +29,25 @@ a {
 }
 a:hover {
 	text-decoration: underline;
+}
+.clearfix {
+	display: block;
+}
+.clearfix:after {
+	content: "";
+	display: block;
+	clear: both;
+	visibility: hidden;
+	line-height: 0;
+	height: 0;
+	margin: 0;
+	padding: 0;
+}
+.pjax-container {
+	display: flex;
+}
+.posts_collection {
+	visibility: hidden;
 }
 .gp-gallery-picture-zoom {
     border: 1px solid #bbb;
@@ -136,6 +142,7 @@ a:hover {
 	background: linear-gradient(to top, rgba(51, 255, 51, 0.27), lawngreen);
 }
 .leftCol {
+	min-height: calc(100vh - 42px);
 	flex: 0 0 180px;
 	padding-top: 20px;
 }
@@ -195,7 +202,7 @@ a:hover {
 	width: 600px;
 	padding: 20px 10px 0 10px;
 }
-.addNewPost {
+#addPost {
 	border: 2px solid lawngreen;
 	background-color: #fff;
 	margin-bottom: 15px;
@@ -379,6 +386,9 @@ progress::-webkit-progress-value {
 	align-items: flex-end;
 	cursor: pointer
 }
+.dislikes .fa-thumbs-down {
+	transform: scale(-1,1);
+}
 .likes:hover .fa-thumbs-up {
 	color: green;
 }
@@ -389,7 +399,7 @@ progress::-webkit-progress-value {
 	width: 19px;
 	height: 22px;
 	font-size: 1.4em;
-	color: rgba(0, 128, 0, 0.6);
+	color: rgba(0, 128, 0, 0.4);
 	margin-right: 5px;
 }
 .green {
@@ -399,7 +409,7 @@ progress::-webkit-progress-value {
 	width: 19px;
 	height: 22px;
 	font-size: 1.4em;
-	color: rgba(255, 0, 0, 0.6);
+	color: rgba(255, 0, 0, 0.4);
 	margin-right: 5px;
 }
 .red {
@@ -483,7 +493,7 @@ progress::-webkit-progress-value {
 	border-radius: 14px;
 	vertical-align: text-top;
 }
-#comment_author_textarea {
+.addCommentTextarea, #addPostTextarea {
 	padding-left: 16px;
 	margin: auto 0;
 	font-family: Arial;
@@ -534,4 +544,66 @@ progress::-webkit-progress-value {
 .lang_inner {
 	display: flex;
 	float: right;
+}
+
+
+
+.profile_col_1 {
+	width: 230px;
+	padding: 40px 15px 10px 15px;
+	border-left: 1px solid black;
+	background-color: rgba(0,0,0,0.3);
+}
+#profile_user_avatar {
+	width: 100%;
+	height: fit-content;
+}
+#profile_user_avatar img {
+	width: 100%;
+	height: auto;
+	border: 1px solid #fff;
+}
+#profile_info {
+	width: 100%;
+	height: fit-content;
+	padding: 10px;
+	background-color: black;
+	color: lawngreen;
+	box-shadow: 0 0 30px lawngreen;
+	border-radius: 20px;
+}
+#profile_city {
+	margin-top: 10px;
+}
+#profile_city cityname {
+	margin-left: 10px;
+	letter-spacing: 4px;
+}
+#university {
+	margin-top: 10px;
+}
+#profile_info > div:first-child {
+	border-bottom: 1px solid lawngreen;
+	margin-bottom: 20px;
+}
+#summ_heap {
+	display: flex;
+	font-size: 1.5em;
+	width: fit-content;
+	margin: 20px auto 0 auto;
+}
+#summ_heap div:not(:first-child) {
+	margin-left: 10px;
+}
+#summ_friends, #summ_photos {
+	width: fit-content;
+}
+#summ_friends p, #summ_photos p {
+	text-align: center;
+}
+.profile_col_2 {
+	width: 550px;
+	padding: 40px 15px 10px 15px;
+	background-color: rgba(0,0,0,0.3);
+	border-right: 1px solid black;
 }

@@ -28,7 +28,7 @@ class LoginController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = '/home';
+    protected $redirectTo = '/news';
 
     /**
      * Create a new controller instance.
@@ -38,20 +38,6 @@ class LoginController extends Controller
     public function __construct()
     {
         $this->middleware('guest');
-    }
-
-    public function showLoginForm(Request $request) {
-
-        if($request->session()->has(['email', 'surname', 'name', 'pwd', 'gender', 'birth', '_token']))
-        {
-          return redirect()->route('home');
-        }
-
-        $utc = $request->session()->get('utc');
-
-        return view('auth.login', [
-            'utc' => $utc
-        ]);
     }
 
     public function login(Request $request)

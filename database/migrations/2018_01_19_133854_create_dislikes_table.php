@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateActivateUsersTable extends Migration
+class CreateDislikesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,10 @@ class CreateActivateUsersTable extends Migration
      */
     public function up()
     {
-        Schema::create('activate_users', function (Blueprint $table) {
+        Schema::create('dislikes', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('user_id')->unique();
-            $table->string('act_key');
-            $table->date('send_date');
-            $table->timestamps();
+            $table->unsignedInteger('post_id');
+            $table->unsignedInteger('user_id');
         });
     }
 
@@ -29,6 +27,6 @@ class CreateActivateUsersTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('activate_users');
+        Schema::dropIfExists('dislikes');
     }
 }

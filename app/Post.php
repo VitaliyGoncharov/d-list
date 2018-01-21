@@ -15,7 +15,7 @@ class Post extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'text', 'photos', 'attachments', 'updated_at'
+        'text', 'photos', 'attachments'
     ];
 
     /**
@@ -28,8 +28,19 @@ class Post extends Authenticatable
     ];
 
     protected $guarded = [
-        'author_id', 'created_at'
+        'user_id','created_at'
     ];
+
+    public $timestamps = false;
+
+    public static function boot()
+    {
+        parent::boot();
+
+        static::creating(function($model) {
+            $model->created_at = $model->freshTimestamp();
+        });
+    }
 
     public function getDates()
     {

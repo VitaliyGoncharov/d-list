@@ -14,9 +14,7 @@ class Comment extends Authenticatable
      *
      * @var array
      */
-    protected $fillable = [
-        'comment', 'updated_at'
-    ];
+    protected $fillable = ['*'];
 
     /**
      * The attributes that should be hidden for arrays.
@@ -27,12 +25,19 @@ class Comment extends Authenticatable
 
     ];
 
-    protected $guarded = [
-        'id', 'user_id', 'post_id', 'userRep_id', 'created_at'
-    ];
+    public $timestamps = false;
+
+    public static function boot()
+    {
+        parent::boot();
+
+        static::creating(function($model) {
+            $model->created_at = $model->freshTimestamp();
+        });
+    }
 
     public function getDates()
     {
-        return array('created_at', 'updated_at');
+        return array('created_at');
     }
 }

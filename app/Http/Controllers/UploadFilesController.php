@@ -1,9 +1,11 @@
 <?php
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use Auth;
 use SplFileInfo;
+use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+
 
 class UploadFilesController extends Controller
 {
@@ -17,7 +19,7 @@ class UploadFilesController extends Controller
 	 **/
 	public function uploadFiles(Request $request)
 	{
-		$user_id = $request->get('user_id');
+		$user_id = Auth::user()->id;
 		
 		$filename = $_FILES['userfile']['name'];
 

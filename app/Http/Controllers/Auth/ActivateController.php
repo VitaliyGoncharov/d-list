@@ -3,14 +3,14 @@ namespace App\Http\Controllers\Auth;
 
 use DateTime;
 use App\Http\Controllers\Controller;
-use App\Activate_users;
+use App\ActivateUser;
 use App\User;
 
 class ActivateController extends Controller
 {
 	public function activate($user_id, $key)
     {
-        $user = Activate_users::where([
+        $user = ActivateUser::where([
             ['user_id', $user_id],
             ['act_key', $key]
         ])->select('user_id', 'act_key', 'send_date')->get();
@@ -27,7 +27,7 @@ class ActivateController extends Controller
             if (preg_match('~^[0-2]$~', $days_have_passed)) {
 
                 //remove record from activate_users and update users field `activate` to 1
-                Activate_users::where([
+                ActivateUser::where([
                     ['user_id', $user_id],
                     ['act_key', $key]
                 ])->delete();

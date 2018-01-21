@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateCommentsTable extends Migration
+class CreateProfileLinkTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,10 @@ class CreateCommentsTable extends Migration
      */
     public function up()
     {
-        Schema::create('comments', function (Blueprint $table) {
+        Schema::create('profile_link', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('comment',255);
-            $table->unsignedInteger('user_id');
-            $table->unsignedInteger('post_id');
-            $table->unsignedInteger('userRep_id')->nullable();
-            $table->dateTime('created_at');
+            $table->integer('user_id');
+            $table->string('link', 20);
         });
     }
 
@@ -30,6 +27,6 @@ class CreateCommentsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('comments');
+        Schema::dropIfExists('profile_link');
     }
 }

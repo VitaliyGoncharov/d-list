@@ -1,17 +1,26 @@
 <?php
+
 namespace App;
 
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class Activate_users extends Authenticatable
+class Password_resets extends Authenticatable
 {
-
     use Notifiable;
 
+    protected $table = 'password_reset';
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
     protected $fillable = [
-        'activate', 'user_id', 'act_key', 'send_date', 'updated_at',
+        'email', 'token', 'send_date'
     ];
+
+    public $timestamps = false;
 
     /**
      * The attributes that should be hidden for arrays.
@@ -19,15 +28,6 @@ class Activate_users extends Authenticatable
      * @var array
      */
     protected $hidden = [
-
+        'send_date',
     ];
-
-    protected $guarded = [
-        'created_at'
-    ];
-
-    public function getDates()
-    {
-        return array('created_at');
-    }
 }

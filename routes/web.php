@@ -11,13 +11,9 @@
 |
 */
 
-/*Route::get('/', function () {
-    return view('welcome');
-});*/
-
 //Auth::routes();
 
-Route::get('/', 'Auth\LoginController@showLoginForm')->name('index');
+Route::get('/', 'HomeController@show')->name('home');
 Route::post('/login', 'Auth\LoginController@login')->name('login');
 
 // Registration Routes...
@@ -38,7 +34,7 @@ Route::post(
 Route::get('password/reset/{email}/{token}', 'Auth\ShowResetPasswordFormController@show');
 Route::post('password/reset', 'Auth\ResetPasswordController@reset')->name('password.reset');
 
-Route::get('/home', 'HomeController@index')->name('home');
+Route::get('/news', 'NewsController@index');
 
 Route::post('/saveutc', 'SaveUtcController@saveAction');
 
@@ -50,3 +46,8 @@ Route::post('/checkuserinput', 'Auth\CheckUserInputController@checkUserInput');
 Route::post('/uploadfiles', 'UploadFilesController@uploadFiles');
 
 Route::post('/addpost','AddNewPostController@addPost');
+Route::post('/loadpostscol','NewsController@loadPostsCollection');
+Route::post('/addcomment','AddCommentController@addComment');
+Route::post('/likes','LikesController@index');
+
+Route::get('/profile/{profileNameOrId}','ProfileController@index');

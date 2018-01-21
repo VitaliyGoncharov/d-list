@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use App\Password_resets;
+use App\PasswordReset;
 use App\User;
 
 class ResetPasswordController extends Controller
@@ -31,7 +31,7 @@ class ResetPasswordController extends Controller
             'password' => 'required|string|min:6|confirmed'
         ], $messages)->validate();
 
-        Password_resets::where('email', $email)->delete();
+        PasswordReset::where('email', $email)->delete();
 
         User::where('email', $email)->update(['password' => bcrypt($password)]);
 

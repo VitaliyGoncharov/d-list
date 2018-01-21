@@ -17,6 +17,6 @@ class LogoutController extends Controller
 
         $request->session()->put('input.old', $user_email);
 
-        return redirect()->route('index');
+        return redirect()->route('home');
     }
 }

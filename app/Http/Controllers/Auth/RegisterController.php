@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Activate_users;
+use App\ActivateUser;
 use App\User;
 use DateTime;
 use Illuminate\Validation\Rule;
@@ -125,7 +125,7 @@ class RegisterController extends Controller
             'send_date' => $data['send_date']
         ];
 
-        Activate_users::updateOrCreate(['user_id' => $user->id], $push_to_activate_users);
+        ActivateUser::updateOrCreate(['user_id' => $user->id], $push_to_activate_users);
 
         return $user;
     }

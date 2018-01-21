@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateThumbsTable extends Migration
+class CreateActivateUserTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,12 @@ class CreateThumbsTable extends Migration
      */
     public function up()
     {
-        Schema::create('thumbs', function (Blueprint $table) {
+        Schema::create('activate_user', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('post_id')->unique();
-            $table->integer('thumb');
+            $table->string('user_id')->unique();
+            $table->string('act_key');
+            $table->date('send_date');
+            $table->timestamps();
         });
     }
 
@@ -27,6 +29,6 @@ class CreateThumbsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('thumbs');
+        Schema::dropIfExists('activate_user');
     }
 }

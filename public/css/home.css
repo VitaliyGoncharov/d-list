@@ -3,7 +3,6 @@
 	padding: 0;
 	box-sizing: border-box;
 }
-
 h1 {
 	font-size: 1.5em;
 }
@@ -227,7 +226,7 @@ input {
 	
 }
 .month {
-	width: 98px;
+	width: 93px;
 	margin: 0 18px 0 14px;
 }
 .gender {

@@ -2,7 +2,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Password_resets;
+use App\PasswordReset;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Auth\GenerateKeyController as GenerateKey;
 use App\Http\Controllers\Auth\SendMailController as SendMail;
@@ -17,7 +17,7 @@ class SendResetLinkController extends Controller
                 'send_date' => date('Y-m-d'),
             ];
 
-        $user = Password_resets::updateOrCreate(['email' => $email], $push_to_pwd_reset);
+        $user = PasswordReset::updateOrCreate(['email' => $email], $push_to_pwd_reset);
 
         $status = $sendMail->sendMailAction($email, $reset_key);
 

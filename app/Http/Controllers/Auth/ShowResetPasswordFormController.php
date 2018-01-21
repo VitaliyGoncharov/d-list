@@ -2,7 +2,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Password_resets;
+use App\PasswordReset;
 use DateTime;
 use Illuminate\Support\Facades\DB; 
 
@@ -11,7 +11,7 @@ class ShowResetPasswordFormController extends Controller
 	
 	public function show($email, $reset_key)
 	{
-		$res_record = Password_resets::where([
+		$res_record = PasswordReset::where([
 			['email', $email],
 			['token', $reset_key]
 		])->select('email', 'token', 'send_date')->get();
