@@ -30,7 +30,7 @@
                 @endif
             @endif
 
-            @if(isset($post->attachments))
+            @if(!empty($post->attachments))
                 @if($post->attachments)
                     <div class="post_attachments">
                         @foreach($post->attachments as $file)
@@ -71,7 +71,7 @@
             </div>
         </div>
 
-        @if($post->comment)
+        @if(!empty($post->comment))
             <div class="post_comments">
                 <div class="post_comment">
                     <img src="{{ $post->comment->avatar }}" class="post_commenter_photo" alt="">

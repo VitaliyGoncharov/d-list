@@ -19,22 +19,31 @@ class AddNewPostController extends Controller
 		$message		= $request->input('message');
 
         $addPostInfo = $newsController->getAddPostInfo($request,true);
-        $photos = $addPostInfo['images'];
-        $attachments = array();
 
-        if($addPostInfo['files'])
+
+
+        if(isset($addPostInfo['files']))
         {
+            $attachments = array();
+
             foreach($addPostInfo['files'] as $file)
             {
                 array_push($attachments,$file['src']);
             }
+
+            $post->attachments = json_encode($attachments);
+        }
+
+        if(isset($addPostInfo['images']))
+        {
+            $photos = $addPostInfo['images'];
+            $post->photos = json_encode($photos);
         }
 
         // assign properties for Post model
 		$post->user_id = $user_id;
 		$post->text = $message;
-		$post->photos = json_encode($photos);
-        $post->attachments = json_encode($attachments);
+
 
         /**
          * If post has at least one of this below then save the post in DB
@@ -74,8 +83,8 @@ class AddNewPostController extends Controller
         ];
 
         // if user attached photos to the post then include them in object
-		if($photos) $new_post->photos = $photos;
-		if($attachments) $new_post->attachments = $addPostInfo['files'];
+		if(isset($photos)) $new_post->photos = $photos;
+		if(isset($attachments)) $new_post->attachments = $addPostInfo['files'];
 
 		array_push($posts,$new_post);
 

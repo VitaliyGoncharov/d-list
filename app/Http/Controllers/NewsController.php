@@ -26,7 +26,6 @@ class NewsController extends Controller
      */
     public function index(Request $request)
     {
-
         $posts = $this->getPosts();
 
         foreach($posts as $post)
@@ -116,6 +115,7 @@ class NewsController extends Controller
 
             // for attachments we need not only src, we also need filename
             $attachments = json_decode($post->attachments);
+
 
             if($attachments)
             {

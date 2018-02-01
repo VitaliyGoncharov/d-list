@@ -12,6 +12,7 @@ $(document).on('pjax:success', function () {
 
 $(document).ready(function () {
     if (location.href === 'http://devvit.ru/news' && $('.posts_collection[data-resized=""]').length !== 0) {
+        console.log('READY');
         resizeImages();
     }
 });
