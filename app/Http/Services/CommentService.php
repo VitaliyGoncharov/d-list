@@ -1,15 +1,18 @@
 <?php
+namespace App\Http\Services;
 
-namespace App\Http\Controllers;
+use App\Http\Interfaces\Services\IComment;
 
-use Illuminate\Http\Request;
-use App\Comment;
-
-class CommentController extends Controller
+class CommentService implements IComment
 {
-    public function getComments($id,$num = 1)
+    public function __construct($comment)
     {
-        $comments = Comment::where('post_id',$id)
+        $this->comment = $comment;
+    }
+
+    public function getComments(int $id,int $num = 1)
+    {
+        $comments = $this->comment->where('post_id',$id)
             ->orderBy('created_at','DESC')
             ->join('users','users.id','=','comments.user_id')
             ->join('profile_link','profile_link.user_id','=','comments.user_id')

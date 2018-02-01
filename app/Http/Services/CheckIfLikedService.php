@@ -1,21 +1,34 @@
 <?php
+namespace App\Http\Services;
 
-namespace App\Http\Controllers;
+use App\Http\Interfaces\Services\ICheckIfLiked;
 
-use Auth;
-use App\Like;
-use Illuminate\Http\Request;
-
-class CheckIfLikedController extends Controller
+class CheckIfLikedService implements ICheckIfLiked
 {
-    public function check($postId)
+
+    /**
+     * CheckIfLikedService constructor.
+     * @param $like
+     * @param $auth
+     */
+    public function __construct($like,$auth)
+    {
+        $this->like = $like;
+        $this->auth = $auth;
+    }
+
+    /**
+     * @param int $postId
+     * @return bool
+     */
+    public function check(int $postId)
     {
         // get the current user id
-        $userId = Auth::user()->id;
+        $userId = $this->auth::user()->id;
 
         // when user likes post the record is created in the `likes` table
         // so if he liked post before, then record would exist in `likes` table
-        $likes = Like::where([
+        $likes = $this->like->where([
             ['post_id',$postId],
             ['user_id',$userId]
         ])->select('id')->get();

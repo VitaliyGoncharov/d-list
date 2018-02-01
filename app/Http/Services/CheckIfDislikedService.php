@@ -1,21 +1,24 @@
 <?php
+namespace App\Http\Services;
 
-namespace App\Http\Controllers;
+use App\Http\Interfaces\Services\ICheckIfDisliked;
 
-use Auth;
-use App\Dislike;
-use Illuminate\Http\Request;
-
-class CheckIfDislikedController extends Controller
+class CheckIfDislikedService implements ICheckIfDisliked
 {
-    public function check($postId)
+    public function __construct($dislike,$auth)
+    {
+        $this->dislike = $dislike;
+        $this->auth = $auth;
+    }
+
+    public function check(int $postId)
     {
         // get the current user id
-        $userId = Auth::user()->id;
+        $userId = $this->auth::user()->id;
 
         // when user dislikes post the record is created in the `dislikes` table
         // so if he disliked post before, then record would exist in `dislikes` table
-        $dislikes = Dislike::where([
+        $dislikes = $this->dislike->where([
             ['post_id',$postId],
             ['user_id',$userId]
         ])->select('id')->get();

@@ -1,13 +1,16 @@
 <?php
+namespace App\Http\Services;
 
-namespace App\Http\Controllers;
+use App\Http\Interfaces\Services\IDateTime;
 
-use DateTime;
-use Illuminate\Http\Request;
-
-class DateTimeController extends Controller
+class DateTimeService implements IDateTime
 {
-    public function changeDateTime($dateTime,$request)
+    public function __construct($request)
+    {
+        $this->request = $request;
+    }
+
+    public function changeDateTime(string $dateTime)
     {
         $monthsWords = [
             'января',
@@ -43,15 +46,15 @@ class DateTimeController extends Controller
         $minutesToChange2 = [2,3,4,22,23,24,32,33,34,42,43,44,52,53,54];
 
 
-        $dateTime = DateTime::createFromFormat('Y-m-d H:i:s',$dateTime);
+        $dateTime = \DateTime::createFromFormat('Y-m-d H:i:s',$dateTime);
 
         //get to know the curDateTime creating time according user timezone
-        $user_utc = $request->session()->get('utc');
+        $user_utc = $this->request->session()->get('utc');
         $oldDateTime = $dateTime->modify("+$user_utc hour");
 
         //get the server date
         date_default_timezone_set('UTC');
-        $serverDateTime = new DateTime("+$user_utc hour");
+        $serverDateTime = new \DateTime("+$user_utc hour");
 
         $oldYear = $oldDateTime->format('Y');
         $oldMonth = $monthsWords[$oldDateTime->format('n') - 1];
