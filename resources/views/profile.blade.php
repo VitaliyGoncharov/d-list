@@ -14,7 +14,7 @@
 			<div id="profile_info">
 				<div><h2>{{ $user->surname.' '.$user->name }}</h2></div>
 				<div id="profile_birth"><p>Дата рождения: {{ $user->birth }}</p></div>
-				<div id="profile_city"><p>Город: <cityname>{{ isset($user->city) ? $user->city : 'неизвестно' }}</cityname></p></div>
+				<div id="profile_city"><p>Город: <cityname>{{ isset($user->city) ? $user->city : '-' }}</cityname></p></div>
 				@if(isset($user->school))
 					<div id="school"><p></p></div>
 				@endif

@@ -93,7 +93,7 @@ input {
 	font-weight: bold;
 }
 .search {
-	height: 28px;
+	height: 26px;
 	flex: 0 0 60%;
 }
 .search_form {
@@ -101,6 +101,7 @@ input {
 	float: right;
 }
 .search_form input, .search_form button {
+    font-family: sans-serif;
 	height: 100%;
 }
 .search_form input {
@@ -111,7 +112,6 @@ input {
 }
 .search_form button {
 	padding: 0 8px;
-	font-size: 1em;
 	border: 1px solid lawngreen;
 	border-radius: 8px;
 	background-color: lawngreen;
@@ -142,8 +142,8 @@ input {
 .reset_pwd {
 	width: 320px;
 	margin: 0 auto;
-	border: lawngreen 2px solid;
-	border-radius: 5px;
+	border: 1px solid lawngreen;
+	border-radius: 3px 3px 6px 6px;
 	padding: 25px 25px 0 25px;
 	background-color: #fff;
 }
@@ -220,13 +220,13 @@ input {
 	margin-bottom: 15px;
 }
 .birthday select {
+	width: 28.3%;
 	padding: 6px;
 }
 .day, .year {
 	
 }
 .month {
-	width: 93px;
 	margin: 0 18px 0 14px;
 }
 .gender {

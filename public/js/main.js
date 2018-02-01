@@ -1,7 +1,4 @@
-console.log('В код не смотри, глаза побереги!');
-
 const DONE = 4;
-addPostFiles = [];
 
 $(document).pjax('.leftMenuLinks, .author', '.pjax-container', {
     fragment: '.pjax-container'
@@ -29,10 +26,10 @@ $(document).ready(function () {
  **/
 function clickUpload(obj) {
     let classNamesArray = obj.className.split(' ');
-    let className = '.' + classNamesArray.pop();
+    let className = classNamesArray.pop();
     let attach_options = {
-        '.fa-camera': 'image/jpg,image/jpeg,image/png',
-        '.fa-file': ''
+        'fa-camera': 'image/*',
+        'fa-file': ' '
     };
 
     for (let key in attach_options) {
@@ -50,9 +47,9 @@ function clickUpload(obj) {
  * show upload progress and file itself
  **********************************************
  **/
-$("#upload").change(function (e) {
+$(".pjax-container").on("change","#upload",function (e) {
     // get to know how many files user attached
-    let files = e.target.files;
+    let files = Object.values(e.target.files);
     let files_num = files.length;
     let uploaded_files_num = $('.addNewPost').find('.uploadingFileProgress').length;
     if (files_num > 8) files_num = 8;
@@ -64,154 +61,197 @@ $("#upload").change(function (e) {
     }
     if (files_num > 8) files_num = 8;
 
-    // show preview of each file if it's a picture,
-    // show preloader to each file if it's a picture,
-    // send request for uploading file,
-    // show uploading progress with percents and initial filename
-    /*window.mytest = function forEachFiles(i = 0) {
-        if(i<files_num) {
-            let file, reader, extension;
-            file = e.target.files[i];
-            extension = file.name.split('.').pop();
-            reader = new FileReader();
+    function readFile(file) {
+        return new Promise(function (res, rej) {
+            let reader = new FileReader();
             reader.readAsDataURL(file);
-            reader.onload = function (e) {
-                console.log(file.name+' - '+i);
-                showUploadProgress(reader,file,extension,e,i);
+            reader.onload = (e) => {
+                let image = new Image();
+                image.src = e.target.result;
+                image.onload = function() {
+                    console.log('readFile');
+                    return res(this.src);
+                };
             }
-        }
-    };
-    mytest();*/
-
-    $.each(files, function (num, file) {
-        console.log(file.name);
-    });
-});
-
-/******* END *******/
-
-/**
- ************************************
- * Insert photo preview in post block
-
- * @param reader Array
- * @param file Array
- * @param extension Array
- * @param e
- * @param i
- ************************************
- **/
-function showUploadProgress(reader, file, extension, e, i) {
-    // if it's a picture then show its preview and rotating preloader
-    if (extension == 'jpg' || extension == 'jpeg' || extension == 'png') {
-        let image = new Image();
-        image.src = e.target.result;
-        image.onload = function (e) {
-            let preview = insertPhotoPreview.call(this, i);
-            let infForUpload = showProgressBar();
-            infForUpload.preview = preview;
-            uploadFileRequest(
-                infForUpload.formData,
-                infForUpload.progressBar,
-                infForUpload.progressSpan,
-                infForUpload.extension,
-                infForUpload.preview,
-                i
-            );
-        }
-    } else {
-        let infForUpload = showProgressBar(); // не загружать, пока индикатор бара не достигнет 100 (не фото) РЕАЛИЗОВАТЬ!!!
-        uploadFileRequest(
-            infForUpload.formData,
-            infForUpload.progressBar,
-            infForUpload.progressSpan,
-            infForUpload.extension
-        );
+        });
     }
 
-    function showProgressBar() {
-        let progressWrapClass = 'uploadingFileProgress';
-        let progressWrap = $('<div></div>');
-        progressWrap.attr('class', progressWrapClass);
-        $('.addNewPost').append(progressWrap);
+    (function addFile(files) {
+        let file = files.shift();
+        let extension = file.name.split('.').pop();
+        let imageExtensions = ['jpg','jpeg'];
+        let checkIfImage = () => {
+            let image;
+            imageExtensions.forEach((value) => {
+                if(value === extension) {
+                    image = true;
+                }
+            });
+            return image;
+        };
 
-        console.log(progressWrap);
+        // if the file is image then read it, show photo preview and progress bar, upload
+        if(checkIfImage()) {
+            readFile(file)
+                .then(
+                    src => {
+                        return new Promise((res,rej) => {
+                            let preview = showPhotoPreview(src);
+                            let progress = showProgressBar(file);
+                            res({
+                                preview: preview,
+                                progress: progress
+                            });
+                        });
+                    },
+                    error => {
 
-        let progressBarWrap = $('<div></div>');
-        progressBarWrap.attr('class', 'progressBarWrap');
-        progressWrap.append(progressBarWrap);
+                })
+                .then(
+                    DOMelems => {
+                        return uploadFile(DOMelems,file,true);
+                    }
+                )
+                .then(
+                    success => {
+                        success.photoWrap.find('.photoPreview').attr('src',success.src);
+                        let closeSpan = $('<span></span>')
+                            .attr('class','close close__addPost')
+                            .html('&times;');
+                        success.photoWrap.append(closeSpan);
 
-        let progressBar = $('<progress></progress>');
-        progressBar.attr({
-            'value': '0',
-            'max': '100'
-        });
-        progressBarWrap.append(progressBar);
+                        if(files.length === 0) {
+                            console.log('End');
+                            return;
+                        }
 
-        let progressSpan = $('<span></span>');
-        progressSpan.attr('class', 'uploadingProgressPercents');
-        progressSpan.html('0%');
-        progressBarWrap.append(progressSpan);
-
-        let filenameSpan = $('<span></span>');
-        filenameSpan.attr('class', 'uploadingFilename');
-        filenameSpan.html(file.name);
-        progressWrap.append(filenameSpan);
-
-        let formData = new FormData();
-        formData.append('userfile', file);
-        formData.append('user_id', $('.addNewPost #user_id').html());
-
-        return {
-            formData: formData,
-            progressBar: progressBar,
-            progressSpan: progressSpan,
-            extension: extension
+                        return addFile(files);
+                    }
+                );
         }
+        else {
+            let promise = new Promise((res,rej) => {
+                let progress = showProgressBar(file);
+                res({
+                    progress: progress
+                });
+            });
+            promise
+                .then(
+                    DOMelems => {
+                        return uploadFile(DOMelems,file,false);
+                    }
+                )
+                .then(
+                    src => {
+                        if($('#uploadedFiles').length == 0) {
+                            let uploadedFiles = $('<div></div>')
+                                .attr('id','uploadedFiles');
+                            uploadedFiles.insertBefore($('.attachSomething'));
+                        }
+
+                        let uploadedFile = $('<div></div>')
+                            .attr('class','uploadedFileWrap')
+                            .attr('data-src',src);
+                        let img = $('<img src="">')
+                            .attr('src','https://cdn.iconscout.com/public/images/icon/free/png-512/docs-document-file-data-google-suits-39cb6f3f9d29e942-512x512.png')
+                            .attr('class','uploadedFileIcon');
+                        let filenameSpan = $('<span></span>')
+                            .attr('class','uploadedFilename')
+                            .html(file.name);
+                        let closeSpan = $('<span></span>')
+                            .attr('class','close close__File')
+                            .html('&times;');
+                        uploadedFile.append(img,filenameSpan,closeSpan);
+                        $('#uploadedFiles').append(uploadedFile);
+
+                        if(files.length === 0) {
+                            console.log('End');
+                            return;
+                        }
+
+                        return addFile(files);
+                    }
+                )
+        }
+
+    })(files);
+});
+/******* END *******/
+
+function showProgressBar(file) {
+    let progressWrapClass = 'uploadingFileProgress';
+    let progressWrap = $('<div></div>');
+    progressWrap.attr('class', progressWrapClass);
+    $('#addPost').append(progressWrap);
+
+    let progressBarWrap = $('<div></div>')
+        .attr('class', 'progressBarWrap');
+    progressWrap.append(progressBarWrap);
+
+    let progressBar = $('<div></div>');
+    progressBar.attr({
+        'class' : 'progress-bar',
+    });
+    progressBar.append($('<span></span>'));
+    progressBarWrap.append(progressBar);
+
+    let progressSpan = $('<span></span>')
+        .attr('class', 'uploadingProgressPercents')
+        .html('0%');
+    progressBarWrap.append(progressSpan);
+
+    let filenameSpan = $('<span></span>')
+        .attr('class', 'uploadingFilename')
+        .html(file.name);
+    progressWrap.append(filenameSpan);
+
+    return {
+        progressWrap: progressWrap,
+        progressBar: progressBar,
+        progressSpan: progressSpan,
+        progressBarWrap: progressBarWrap
     }
 }
-
-/******* END *******/
 
 /**
  ************************************
  * Insert photo preview in post block
  ************************************
  *
- * @param i
  * @return object
+ * @param src
  **/
-function insertPhotoPreview(i) {
-    let photosPreviewDivClass = 'attachedPhotosPreview';
+function showPhotoPreview(src) {
+    let photosPreviewSelector = '.attachedPhotosPreview';
     let photoWrapClass = 'attachedPhotoWrap';
+    let photosPreviewDiv = $(photosPreviewSelector);
 
-    if ($('.' + photosPreviewDivClass).length == 0) {
-        let photosPreviewDiv = $('<div></div>');
-        photosPreviewDiv.attr('class', photosPreviewDivClass);
-        photosPreviewDiv.insertBefore('.attachSomething');
+    if (photosPreviewDiv.length === 0) {
+        photosPreviewDiv = $('<div></div>')
+            .attr('class',photosPreviewSelector.substr(1));
+        photosPreviewDiv.insertAfter('.add_text');
     }
 
-    let attachedphotoWrap = $('<div></div>');
-    attachedphotoWrap.attr('class', photoWrapClass);
-    $('.' + photosPreviewDivClass).append(attachedphotoWrap);
+    let attachedphotoWrap = $('<div></div>')
+        .attr('class', photoWrapClass);
+    photosPreviewDiv.append(attachedphotoWrap);
 
-    let photoPrevImg = $('<img>');
-    photoPrevImg
+    let photoPrevImg = $('<img src="">')
         .css('opacity', '0.5')
-        .attr('id', 'photoPreview_' + i)
-        .attr('src', this.src);
+        .attr('class', 'photoPreview')
+        .attr('src', src);
     attachedphotoWrap.append(photoPrevImg);
 
-    let preloader = $('<img>');
-    preloader
+    let preloader = $('<img src="">')
         .attr('class', 'preloader')
-        .attr('id', 'photoPreloader_' + i)
         .attr('src', '/ajax-loader.gif');
     attachedphotoWrap.append(preloader);
 
     return {
-        img: $(photoPrevImg),
-        preloader: $(preloader)
+        img: photoPrevImg,
+        preloader: preloader,
+        attachedphotoWrap: attachedphotoWrap
     }
 }
 
@@ -221,53 +261,70 @@ function insertPhotoPreview(i) {
  **********************************************************************
  *  Send request to server for uploading file
  *
- *  @return filePath (from the server)
  **********************************************************************
  */
-function uploadFileRequest(formData, progressBar, progressSpan, extension, preview = null, i) {
-    let xhr = new XMLHttpRequest();
-    xhr.upload.onprogress = function (e) {
-        if (e.lengthComputable) {
-            let loaded = e.loaded / e.total;
-            if (loaded < 1) {
-                progressBar.val((loaded * 100) | 0);
-                progressSpan.html(((loaded * 100) | 0) + '%');
-                console.log(((loaded * 100) | 0) + '%');
+function uploadFile(DOMelems,file,ifImage) {
+    return new Promise(function (res, rej) {
+        // if it's image then there must be an image and preloader in DOMelems
+        let img,preloader;
+        if(ifImage) {
+            img = DOMelems.preview.img;
+            preloader = DOMelems.preview.preloader;
+        }
+
+        // progress bar is actually a span, which width we change from 1% to 100%
+        let progressBar = DOMelems.progress.progressBar.find('span');
+        let progressSpan = DOMelems.progress.progressSpan;
+
+        let formData = new FormData();
+        formData.append('userfile',file);
+
+        let xhr = new XMLHttpRequest();
+        xhr.upload.onprogress = function (e) {
+            if (e.lengthComputable) {
+                let loaded = e.loaded / e.total;
+                if (loaded < 1) {
+                    progressBar.css('width',((loaded * 100) | 0) + '%');
+                    progressSpan.html(((loaded * 100) | 0) + '%');
+                }
             }
+        };
+        xhr.upload.onload = function () {
+            progressBar.css('width','100%');
+            progressSpan.html('100%');
+
+            // if it's an image then make it opacity, remove preloader, remove progress bar in 0,5s
+            // if it's not an image leave progress bar untouched
+            if(ifImage) {
+                img.css('opacity', '1');
+                preloader.remove();
+                setTimeout(function () {
+                    DOMelems.progress.progressWrap.remove();
+                    return res({
+                        'photoWrap':DOMelems.preview.attachedphotoWrap,
+                        'src':xhr.responseText
+                    });
+                },500);
+            }
+            else {
+                setTimeout(function () {
+                    DOMelems.progress.progressWrap.remove();
+                    return res(xhr.responseText);
+                },500);
+            }
+        };
+        xhr.open("POST", "/uploadfiles", true);
+        xhr.setRequestHeader('X-CSRF-TOKEN', $('input[name="_token"]').attr('value'));
+        xhr.send(formData);
+
+        xhr.onreadystatechange = function () {
+            if (this.readyState != DONE) return;
+
+
         }
-    }
-    xhr.upload.onload = function (e) {
-        if (progressBar.val() < 100) {
-            let progressBarValue = progressBar.val();
-            let timerId = setTimeout(function tick() {
-                if (progressBarValue < 100) {
-                    progressBarValue++;
-                    progressBar.val(progressBarValue);
-                    progressSpan.html(progressBarValue + '%');
-                    setTimeout(tick, 5);
-                }
-                else {
-                    if (extension == 'jpg' || extension == 'jpeg' || extension == 'png') {
-                        preview.img.css('opacity', '1');
-                        preview.preloader.remove();
-                    }
-
-                    i++;
-                    mytest(i);
-                }
-            }, 1000);
-        }
-    };
-    xhr.open("POST", "/uploadfiles", true);
-    xhr.setRequestHeader('X-CSRF-TOKEN', $('input[name="_token"]').attr('value'));
-    xhr.send(formData);
-
-    xhr.onreadystatechange = function () {
-        if (this.readyState != DONE) return;
-
-        addPostFiles.push(this.responseText);
-    }
+    });
 }
+
 
 /**
  **********************************************************************
@@ -378,7 +435,7 @@ let resizable_textarea = '.autoresizable';
 let calculateHeightDiv = '.comment_size';
 let oldVal = '';
 
-$(resizable_textarea).on('change keyup paste click', function (e) {
+$(resizable_textarea).on('change keyup keydown paste click', function (e) {
     let target = e.target;
     let curVal = $(target).val();
 
@@ -405,36 +462,28 @@ $(resizable_textarea).on('change keyup paste click', function (e) {
 function addPost() {
     let formData = new FormData();
     formData.append('message', $('#addPostTextarea').val());
-
-    if (addPostFiles.length !== 0) {
-        formData.append('files', JSON.stringify(addPostFiles));
-    }
+    console.log('+++');
 
     let xhr = new XMLHttpRequest();
     xhr.open('post', '/addpost', true);
     xhr.setRequestHeader('X-CSRF-TOKEN', $('input[name="_token"]').attr('value'));
     xhr.send(formData);
 
-    console.log('READY');
-
     xhr.onreadystatechange = function () {
         let addNewPost = '#addPost';
         let progressBlock = '.uploadingFileProgress';
         let msg = '#addPostTextarea';
         let photosPreview = '.attachedPhotosPreview';
+        let files = '#uploadedFiles';
 
-        if (this.readyState != DONE) return;
+        if (this.readyState !== DONE) return;
 
         if (this.status === 200) {
-            // clean the array of files (if user attached files)
-            if ($(addNewPost).find(progressBlock).length > 0) {
-                addPostFiles = [];
-            }
-
-            // clean the inputed data (text, photos and other files)
-            $(addNewPost).find(progressBlock).remove();
+            // clean the inputed data (text, photos preview and progress)
             $(addNewPost).find(msg).val('');
             $(addNewPost).find(photosPreview).remove();
+            $(addNewPost).find(progressBlock).remove();
+            $(addNewPost).find(files).remove();
 
             // convert new post "string type" from server to object
             // and insert post to the website page
@@ -455,16 +504,15 @@ function addPost() {
     return true;
 }
 
-$('#addPostTextarea').on('keydown', function (e) {
+$('.pjax-container').on('keydown','#addPostTextarea',function (e) {
     if (e.keyCode == 13) {
         addPost();
     }
 });
 
-$('#addPostBut').on('click', function () {
+$('.pjax-container').on('click','#addPostBut',function () {
     addPost();
 });
-
 /******* END *******/
 
 function loadImage(url) {
@@ -535,6 +583,7 @@ $(window).scroll(function () {
     if ($(window).scrollTop() == $(document).height() - $(window).height()) {
         if (location.href === 'http://devvit.ru/news') {
             let lastPostId = $('.centerCol_inner .posts_collection:last-child').attr('data-lastPost-id');
+
             $.ajax({
                 type: 'POST',
                 url: '/loadpostscol',
@@ -543,6 +592,11 @@ $(window).scroll(function () {
                 },
                 data: 'lastPostId=' + lastPostId,
                 success: function (data) {
+                    if(!data) {
+                        console.log('Вы просмотрели все посты!');
+                        return;
+                    }
+
                     $('.centerCol_inner').append(data);
                     resizeImages();
                 }
@@ -557,7 +611,7 @@ $(window).scroll(function () {
  * Add comment to the post
  *************************
  */
-$('.addCommentTextarea').on('keydown', function (e) {
+$('.pjax-container').on('keydown', '.addCommentTextarea',function (e) {
     if (e.keyCode == 13) {
         let target = e.target;
         let val = $(target).val();
@@ -577,6 +631,7 @@ $('.addCommentTextarea').on('keydown', function (e) {
             processData: false,
             contentType: false,
             success: function (data) {
+                console.log('Comment!');
                 let curPost = $(target).parents('.post');
                 let post_comments = curPost.find('.post_comments');
 
@@ -593,4 +648,73 @@ $('.addCommentTextarea').on('keydown', function (e) {
     }
 });
 /******* END *******/
+
+/**
+ *********************************************************
+ * Delete attached photo when user want to CREATE new post
+ *********************************************************
+ */
+$('.pjax-container').on('click','.close__addPost',function (e) {
+    let photo = $(e.target).siblings('.photoPreview');
+    let src = $(photo).attr('src');
+    let formData = new FormData();
+    formData.append('src',src);
+
+    let photos = photo.parents('.attachedPhotosPreview').find('.attachedPhotoWrap');
+    if(photos.length === 1) {
+        $(photo).parents('.attachedPhotosPreview').remove();
+    }
+    else {
+        photo.parent('.attachedPhotoWrap').remove();
+    }
+
+    $.ajax({
+        type: 'POST',
+        url: '/deleteAttachedPhoto',
+        headers: {
+            'X-CSRF-TOKEN': $('input[name="_token"]').attr('value')
+        },
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function (data) {
+            console.log(data);
+        }
+    });
+});
+/******* END *******/
+
+/**
+ *********************************************************
+ * Delete attached file when user want to CREATE new post
+ *********************************************************
+ */
+$('.pjax-container').on('click','.close__File',function (e) {
+    let fileWrap = $(e.target).parents('.uploadedFileWrap');
+    let src = fileWrap.attr('data-src');
+    let name = fileWrap.find('.uploadedFileName').html();
+    let formData = new FormData();
+    formData.append('src',src);
+
+    if($('.uploadedFileWrap').length == 1) {
+        $('#uploadedFiles').remove();
+    }
+    else {
+        fileWrap.remove();
+    }
+
+    $.ajax({
+        type: 'POST',
+        url: '/deleteAttachedFile',
+        headers: {
+            'X-CSRF-TOKEN': $('input[name="_token"]').attr('value')
+        },
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function (data) {
+            console.log(data);
+        }
+    });
+});
 

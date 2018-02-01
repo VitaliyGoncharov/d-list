@@ -21,7 +21,7 @@
 
 
             @if(isset($post->photos))
-                @if($post->photos != null)
+                @if($post->photos)
                     <div class="post_photo clearfix" data-resized="">
                         @foreach($post->photos as $photo)
                             <img src="{{ $photo }}" class="post_photo_inner" alt="">
@@ -30,14 +30,22 @@
                 @endif
             @endif
 
-
-            <div class="post_media">
-
-            </div>
+            @if(isset($post->attachments))
+                @if($post->attachments)
+                    <div class="post_attachments">
+                        @foreach($post->attachments as $file)
+                            <div class="uploadedFileWrap" data-src="{{ $file['src'] }}">
+                                <img class="uploadedFileIcon" src="https://cdn.iconscout.com/public/images/icon/free/png-512/docs-document-file-data-google-suits-39cb6f3f9d29e942-512x512.png" alt="">
+                                <span class="uploadedFilename">{{ $file['name'] }}</span>
+                            </div>
+                        @endforeach
+                    </div>
+                @endif
+            @endif
 
             <div class="post_likes">
                 <div class="likes">
-                    <i class="fa fa-thumbs-up {{ isset($post->liked) ? 'green' : '' }}" aria-hidden="true"></i>
+                    <i class="fa fa-thumbs-up {{ !empty($post->liked) ? 'green' : '' }}" aria-hidden="true"></i>
 
                     @if(isset($post->thumbsUp))
                         <span class="{{ isset($post->liked) ? 'green' : '' }}">{{ $post->thumbsUp }}</span>
@@ -45,7 +53,7 @@
                 </div>
 
                 <div class="dislikes">
-                    <i class="fa fa-thumbs-down {{ isset($post->disliked) ? 'red' : '' }}" aria-hidden="true"></i>
+                    <i class="fa fa-thumbs-down {{ !empty($post->disliked) ? 'red' : '' }}" aria-hidden="true"></i>
 
                     @if(isset($post->thumbsDown))
                         <span class="{{ isset($post->disliked) ? 'red' : '' }}">{{ $post->thumbsDown }}</span>
@@ -63,7 +71,7 @@
             </div>
         </div>
 
-        @if(isset($post->comment))
+        @if($post->comment)
             <div class="post_comments">
                 <div class="post_comment">
                     <img src="{{ $post->comment->avatar }}" class="post_commenter_photo" alt="">

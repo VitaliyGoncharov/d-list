@@ -49,5 +49,7 @@ Route::post('/addpost','AddNewPostController@addPost');
 Route::post('/loadpostscol','NewsController@loadPostsCollection');
 Route::post('/addcomment','AddCommentController@addComment');
 Route::post('/likes','LikesController@index');
+Route::post('/deleteAttachedPhoto','AddNewPostController@deleteAttachedPhoto');
+Route::post('/deleteAttachedFile','AddNewPostController@deleteAttachedFile');
 
 Route::get('/profile/{profileNameOrId}','ProfileController@index');

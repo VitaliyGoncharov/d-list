@@ -3,8 +3,8 @@
 	padding: 0;
 	box-sizing: border-box;
 }
-h1, h2, h3, h4, h5 {
-	font-family: Arial;
+h1, h2, h3, h4, h5, div, span, input, a, button, textarea {
+	font-family: sans-serif;
 }
 h1 {
 	font-size: 1.5em;
@@ -88,8 +88,10 @@ a:hover {
 	min-width: 960px;
 	/* http://bgfons.com/upload/leather_texture386.jpg */
 	/* https://a.wattpad.com/userbg/iErrored.89798.jpg */
-	/* https://a.wattpad.com/userbg/iErrored.89798.jpg */
-	background: url('/bg_image.jpg') no-repeat fixed 50% 50%;
+	/* https://a.wattpad.com/userbg/iErrored.89798.jpg bg_image.jpg*/
+	/*http://wallpapers-hd-wide.com/wp-content/uploads/2016/01/highlighted-wood-texture-1920x1080.jpg*/
+	background: url('/../bg_image.jpg') no-repeat fixed 50% 50%;
+	/*background: url('https://i0download.pchome.net/t_1600x1200/g1/M00/09/0D/ooYBAFO02CKIAp8HABFIhEbtMsgAABsRwGg0k4AEUic844.jpg') no-repeat fixed 50% 50%;*/
 	-webkit-background-size: cover;
 	background-size: cover;
 }	
@@ -133,7 +135,6 @@ a:hover {
 }
 .search_form button {
 	padding: 0 8px;
-	font-size: 1em;
 	border: 1px solid lawngreen;
 	border-radius: 8px;
 	background-color: lawngreen;
@@ -202,6 +203,8 @@ a:hover {
 	width: 600px;
 	padding: 20px 10px 0 10px;
 }
+
+/*Add post styles*/
 #addPost {
 	border: 2px solid lawngreen;
 	background-color: #fff;
@@ -210,8 +213,7 @@ a:hover {
 }
 .add_text {
 	display: flex;
-	margin-left: -15px;
-	margin-right: -15px;
+	margin: 0 -15px 0 -15px;
 	padding-left: 15px;
 	padding-right: 15px;
 	padding-bottom: 3px;
@@ -221,6 +223,7 @@ a:hover {
 	display: none;
 }
 .smileys {
+	display: none;
 	position: relative;
 }
 .smileys img {
@@ -238,14 +241,40 @@ a:hover {
 	border-bottom: 1px solid rgba(103, 103, 226, 0.68);
 }
 .attachedPhotoWrap {
-	display: inline-block;
-	position: relative;
-	margin-top: 5px;
-	margin-right: 3px;
+    display: inline-block;
+    position: relative;
+    margin-top: 5px;
+    margin-right: 3px;
+}
+.attachedPhotoWrap:hover {
+    cursor: pointer;
+}
+.close {
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    font-size: 1.3em;
+    font-weight: bold;
+    border-radius: 50%;
+}
+.close__addPost {
+    display: flex;
+    right: 2px;
+    top: 2px;
+    width: 24px;
+    height: 24px;
+    background-color: #fff;
+    opacity: 0.3;
+    box-shadow: 0 2px 2px rgba(0,0,0,0.5);
+}
+.close:hover {
+    opacity: 1;
+    background-color: #fff;
+    cursor: pointer;
 }
 .attachedPhotosPreview img {
 	width: auto;
-	height: 70px;
+	height: 120px;
 	vertical-align: bottom;
 }
 .preloader {
@@ -254,6 +283,45 @@ a:hover {
 	height: 25px!important;
 	top: 0; right: 0; bottom: 0; left: 0;
 	margin: auto;
+}
+#uploadedFiles {
+    margin: 0 -15px 0 -15px;
+    padding: 5px 15px 5px 15px;
+    border-bottom: 1px solid rgba(103, 103, 226, 0.68);
+    margin-bottom: 5px;
+}
+.uploadedFileWrap {
+    position: relative;
+}
+.uploadedFileWrap:hover {
+    background-color: #b4ffb4;
+}
+.uploadedFileWrap:hover .close__File {
+    display: flex;
+}
+.uploadedFileIcon  {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    border-radius: 5px;
+    margin-left: 5px;
+    vertical-align: middle;
+}
+.uploadedFilename {
+    display: inline-block;
+    margin-left: 10px;
+}
+.close__File {
+    display: none;
+    right: 4px;
+    top: 4px;
+    width: 22px;
+    height: 22px;
+    border: 1px solid black;
+    opacity: 0.5;
+}
+.close__File:hover {
+    opacity: 1;
 }
 #upload {
 	display: none;
@@ -293,18 +361,22 @@ a:hover {
 }
 .progressBarWrap {
 	position: relative;
+	text-align: center;
 }
-progress {
-	/*background-color: #f3f3f3;*/
-	border: 2px solid lawngreen;
-	height: 20px;
-	border-radius: 5px;
+.progress-bar {
+    background-color: whiteSmoke;
+    border: 2px solid lawngreen;
+    border-radius: 5px;
+    box-shadow: 0 2px 3px rgba(0,0,0,.25) inset;
+    width: 164px;
+    height: 20px;
 }
-progress::-webkit-progress-bar {
-	background-color: rgba(124,252,0, 0.1); 
-}
-progress::-webkit-progress-value {
-	background-color: lawngreen; 
+.progress-bar > span {
+    background-color: lawngreen;
+    border-radius: 2px;
+    width: 0;
+    height: 100%;
+    display: block;
 }
 .uploadingProgressPercents {
 	position: absolute;
@@ -312,8 +384,6 @@ progress::-webkit-progress-value {
 	right: 0;
 	bottom: 0;
 	left: 0;
-	margin: auto;
-	width: fit-content;
 }
 .uploadingFilename {
 	margin-left: 10px;
@@ -588,8 +658,8 @@ progress::-webkit-progress-value {
 }
 #summ_heap {
 	display: flex;
+	justify-content: center;
 	font-size: 1.5em;
-	width: fit-content;
 	margin: 20px auto 0 auto;
 }
 #summ_heap div:not(:first-child) {
