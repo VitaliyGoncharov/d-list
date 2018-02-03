@@ -17,7 +17,7 @@ class NewPostInfoService implements INewPostInfo
         if($this->request->session()->has('news.addPost.files'))
         {
             $filesSession = $this->request->session()->get('news.addPost.files');
-            $userId = $this->auth->user()->id;
+            $userId = $this->auth::user()->id;
             // $images will contain all images
             // $files won't contain images
             $images = [];

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Interfaces\Services\INewPostInfo;
 use Auth;
 use App\Post;
 use App\ProfileLink;
@@ -13,12 +14,12 @@ use App\Http\Controllers\NewsController;
 
 class AddNewPostController extends Controller 
 {
-	public function addPost(Request $request,Post $post,NewsController $newsController)
+	public function addPost(Request $request,Post $post,INewPostInfo $INewPostInfo)
 	{
         $user_id		= Auth::user()->id;
 		$message		= $request->input('message');
 
-        $addPostInfo = $newsController->getAddPostInfo($request,true);
+        $addPostInfo = $INewPostInfo->getNewPostInfo();
 
 
 

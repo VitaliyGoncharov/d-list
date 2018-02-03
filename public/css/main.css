@@ -433,7 +433,7 @@ a:hover {
 .post_content {
 	margin-top: 10px;
 }
-.post_photo {
+.post_photo, .post_attachments {
 	margin-top: 10px;
 }
 .post_photo_inner {

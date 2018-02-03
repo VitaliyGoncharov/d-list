@@ -87,7 +87,6 @@ class NewsController extends Controller
 
         // if there are no posts then exit
         if(!isset($posts[0])) {
-            echo 'There are no posts anymore';
             exit;
         }
 

@@ -1,13 +1,12 @@
 <?php
 namespace App\Http\Controllers;
 
+use App\Http\Interfaces\Services\ILeftMenu;
 use App\User;
 use App\ProfileLink;
 use App\Profile;
 use App\Http\Controllers\Controller;
-use App\Http\Controllers\LeftMenuController;
 use App\Http\Middleware\RedirectIfNotAuthenticated;
-use Illuminate\Http\Request;
 
 class ProfileController extends Controller
 {
@@ -17,13 +16,13 @@ class ProfileController extends Controller
 		$this->middleware(RedirectIfNotAuthenticated::class);
 	}
 
-	public function index($profileNameOrId, Request $request, LeftMenuController $leftMenuController)
+	public function index($profileNameOrId,ILeftMenu $ILeftMenu)
 	{
 		$profileLink = ProfileLink::where('link',$profileNameOrId)->select('user_id','link')->get();
 
 		if(isset($profileLink[0]))
 		{
-			$leftMenuLinks = $leftMenuController->index();
+			$leftMenuLinks = $ILeftMenu->getLinks();
 
 			$user_id = $profileLink[0]->user_id;
 

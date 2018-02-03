@@ -26,7 +26,7 @@
     </div> <!-- End of the footer_inner -->
 </div> <!-- End of the footer -->
 
-@if($url === '/')
+@if(isset($url) && $url === '/')
     <script src="{{ asset('js/jquery-3.2.1.js') }}" defer></script>
     <script src="{{ asset('js/home.js') }}" defer></script>
     <script src="https://www.google.com/recaptcha/api.js" defer></script>

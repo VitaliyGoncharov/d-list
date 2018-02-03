@@ -5,13 +5,13 @@ $(document).pjax('.leftMenuLinks, .author', '.pjax-container', {
 });
 
 $(document).on('pjax:success', function () {
-    if (location.href === 'http://devvit.ru/news' && $('.posts_collection[data-resized=""]').length !== 0) {
+    if (location.href.match(/([^/]+)$/)[0] === 'news' && $('.posts_collection[data-resized=""]').length !== 0) {
         resizeImages();
     }
 });
 
 $(document).ready(function () {
-    if (location.href === 'http://devvit.ru/news' && $('.posts_collection[data-resized=""]').length !== 0) {
+    if (location.href.match(/([^/]+)$/)[0] === 'news' && $('.posts_collection[data-resized=""]').length !== 0) {
         console.log('READY');
         resizeImages();
     }
@@ -582,7 +582,7 @@ function resizeImages(addPost = false) {
  */
 $(window).scroll(function () {
     if ($(window).scrollTop() == $(document).height() - $(window).height()) {
-        if (location.href === 'http://devvit.ru/news') {
+        if (location.href.match(/([^/]+)$/)[0] === 'news') {
             let lastPostId = $('.centerCol_inner .posts_collection:last-child').attr('data-lastPost-id');
 
             $.ajax({
@@ -697,7 +697,7 @@ $('.pjax-container').on('click','.close__File',function (e) {
     let formData = new FormData();
     formData.append('src',src);
 
-    if($('.uploadedFileWrap').length == 1) {
+    if(fileWrap.siblings('.uploadedFileWrap').length == 0) {
         $('#uploadedFiles').remove();
     }
     else {
