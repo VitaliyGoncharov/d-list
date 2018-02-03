@@ -11,8 +11,6 @@
     </noscript>
     <link rel="stylesheet" href="{{ asset('css/font-awesome/css/font-awesome.min.css') }}">
     <link rel="stylesheet" href="{{ asset('css/home.css') }}">
-    <script src="{{ asset('js/jquery-3.2.1.js') }}"></script>
-    <script src='https://www.google.com/recaptcha/api.js'></script>
 </head>
 <body>
 <div class="wrap">
@@ -44,7 +42,35 @@
                 <div class="leftCol_inner">
                     {{--https://i.ytimg.com/vi/YH5ul5R7Jc0/maxresdefault.jpg--}}
                     <h2>Be in contact with your friends</h2>
-                    <img class="img-fluid" src="{{ asset('/rus.jpg') }}" alt="">
+
+                    <div class="slideshow-container">
+                        <div class="mainSlides fade">
+                            <img class="" src="http://psihogrammatika.ru//wp-content/uploads/2015/12/obshhenie-2.jpg" alt="">
+                        </div>
+
+                        <div class="mainSlides fade">
+                            <img class="" src="http://2.bp.blogspot.com/-05K6Xeez9aM/Ts0FWKUp3zI/AAAAAAAAC0A/LOT3sUxzwjI/w1200-h630-p-k-no-nu/fb.jpg" alt="">
+                        </div>
+
+                        <div class="mainSlides fade">
+                            <img class="" src="https://umi.ru/images/cms/data/450_feedback2.png" alt="">
+                        </div>
+
+                        <div class="leftSide">
+                            <a class="prev" onclick="plusSlides(-1)">&#10094</a>
+                        </div>
+
+                        <div class="rightSide">
+                            <a class="next" onclick="plusSlides(1)">&#10095</a>
+                        </div>
+
+                    </div>
+
+                    <div style="text-align: center;">
+                        <span class="dot" onclick="currentSlide(1)"></span>
+                        <span class="dot" onclick="currentSlide(2)"></span>
+                        <span class="dot" onclick="currentSlide(3)"></span>
+                    </div>
                 </div>
             </div> <!-- End of the left column -->
 
@@ -245,17 +271,6 @@
                                     <input type="hidden" id="last_birth_year" value="{{ session('last.year') }}">
                                 </div>
 
-                                <script>
-                                    var day = $('#last_birth_day').val();
-                                    $('.day option[value="' + day + '"]').attr('selected', '1');
-
-                                    var month = $('#last_birth_month').val();
-                                    $('.month option[value="' + month + '"]').attr('selected', '1');
-
-                                    var year = $('#last_birth_year').val();
-                                    $('.year option[value="' + year + '"]').attr('selected', '1');
-                                </script>
-
                                 @if($errors->register->has('day') || $errors->register->has('month') || $errors->register->has('year'))
                                     <div class="validation-message for_birth">
                                         <div class="alert-danger float-right">
@@ -304,126 +319,6 @@
             </div> <!-- End of the right column -->
         </div> <!-- End of the content_inner -->
     </div> <!-- End of the content -->
-</div> <!-- End of the wrap [100vh] -->
-
-<!-- Footer -->
-<div class="footer">
-    <div class="footer_inner">
-        <div class="flogo">
-            <a href="#">Devvit © 2017</a>
-        </div>
-
-        <div class="links">
-            <div class="links_inner">
-                <a href="#">О нас</a>
-                <a href="#">Правила</a>
-                <a href="#">Реклама</a>
-                <a href="#">Разработчикам</a>
-            </div>
-        </div>
-
-        <div class="lang">
-            <div class="lang_inner">
-                <p>Язык:</p>
-                <a href="#">EN</a>
-                <a href="#">RU</a>
-            </div>
-        </div>
-    </div> <!-- End of the footer_inner -->
-</div> <!-- End of the footer -->
 
 
-<script>
-    $(document).ready(function(){
-        var date = new Date();
-        var utc = -date.getTimezoneOffset()/60;
-        $('#utc').attr('value',utc);
-
-
-        $('.checkbox').on('click', function() {
-            $('.checkbox_box').attr('checked');
-        });
-
-    });
-</script>
-
-<script>
-
-    var ids = [
-        'name',
-        'surname',
-        'reg_email',
-        'reg_password',
-    ];
-
-    function validate() {
-        var parent = $('#' + input_id).parent().parent().find('.error');
-        
-        $.ajax({
-            type: 'POST',
-            async: true,
-            headers: {
-                'X-CSRF-TOKEN': $('input[name="_token"]').attr('value')
-            },
-            url: '/checkuserinput',
-            data: input_id + '=' + $('#' + input_id).val(),
-            success: function(data) {
-
-                if(data == 'success')
-                {
-                    $('#' + input_id).css('border-color', 'grey');
-                    parent.find('.validation-message').remove();
-                    
-
-                    $(parent).append(
-                        "<div class='validation-message'><div class='float-right'><img src=\"/success-mark.png\"></div></div>"
-                    );
-                }
-                else
-                {
-                    $('#' + input_id).css('border-color', 'red');
-                    parent.find('.validation-message').remove();
-
-                    $(parent).append(
-                        "<div class='validation-message'><div class='alert-danger float-right'><p></p></div></div>"
-                    );
-
-                    $(parent.find('p')).html(data);
-                }
- 
-
-            }
-        });
-    }
-
-    Function.prototype.delayed = function (ms) {
-        var timer = 0;
-        var callback = this;
-        return function() {
-            input_id = this.id;
-            clearTimeout(timer);
-            timer = setTimeout(callback, ms);
-        };
-    };
-    
-    for(i=0;i<ids.length;i++)
-    {
-        document.getElementById(ids[i]).addEventListener('keyup', validate.delayed(500));
-        document.getElementById(ids[i]).addEventListener('focusout', validate.delayed(500));
-    }
-    
-</script>
-
-@if( !$errors->register->has('captcha') )
-    <script>
-        $(document).ready(function() {
-            $('.g-recaptcha').css({'display':'none'});
-
-            $('#reg_password').on('focus', function() {
-                $('.g-recaptcha').slideDown("slow");
-            });
-        });
-    </script>
-@endif
-</body>
-</html>
+@include('layouts.foot', ['url' => '/'])
