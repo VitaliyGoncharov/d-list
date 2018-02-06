@@ -30,6 +30,9 @@ a {
 a:hover {
 	text-decoration: underline;
 }
+.inDevelopment {
+    color: #7cfc0026!important;
+}
 .clearfix {
 	display: block;
 }

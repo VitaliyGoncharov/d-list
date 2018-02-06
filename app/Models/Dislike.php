@@ -1,12 +1,12 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Like extends Model
+class Dislike extends Model
 {
-    protected $table = 'likes';
+    protected $table = 'dislikes';
 
     protected $fillable = ['*'];
 

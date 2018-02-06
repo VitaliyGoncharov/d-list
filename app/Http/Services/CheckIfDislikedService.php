@@ -5,16 +5,16 @@ use App\Http\Interfaces\Services\ICheckIfDisliked;
 
 class CheckIfDislikedService implements ICheckIfDisliked
 {
-    public function __construct($dislike,$auth)
+    public function __construct($dislike)
     {
         $this->dislike = $dislike;
-        $this->auth = $auth;
+        $this->auth = request()->user();
     }
 
     public function check(int $postId)
     {
         // get the current user id
-        $userId = $this->auth::user()->id;
+        $userId = $this->auth->id;
 
         // when user dislikes post the record is created in the `dislikes` table
         // so if he disliked post before, then record would exist in `dislikes` table

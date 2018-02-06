@@ -1,27 +1,25 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use App\Http\Interfaces\Services\INewPostInfo;
-use Auth;
-use App\Post;
-use App\ProfileLink;
-use App\User;
+use App\Repositories\PostRepository;
+use App\Models\Post;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Http\Controllers\NewsController;
 
 
 class AddNewPostController extends Controller 
 {
-	public function addPost(Request $request,Post $post,INewPostInfo $INewPostInfo)
+	public function addPost(PostRepository $postRepository,INewPostInfo $INewPostInfo)
 	{
-        $user_id		= Auth::user()->id;
-		$message		= $request->input('message');
+        $user_id		= request()->user()->id;
+		$message		= request()->input('message');
 
         $addPostInfo = $INewPostInfo->getNewPostInfo();
-
-
+        $saveToPost = [
+            'user_id' => $user_id,
+            'text' => $message,
+        ];
 
         if(isset($addPostInfo['files']))
         {
@@ -32,69 +30,65 @@ class AddNewPostController extends Controller
                 array_push($attachments,$file['src']);
             }
 
-            $post->attachments = json_encode($attachments);
+            $saveToPost['files'] = json_encode($attachments);
         }
 
         if(isset($addPostInfo['images']))
         {
             $photos = $addPostInfo['images'];
-            $post->photos = json_encode($photos);
+            $saveToPost['photos'] = json_encode($photos);
         }
-
-        // assign properties for Post model
-		$post->user_id = $user_id;
-		$post->text = $message;
-
 
         /**
          * If post has at least one of this below then save the post in DB
          * otherwise exit
          */
 		if($message || $photos || $attachments) {
-            $post->save();
+            $postRepository->create($saveToPost);
         }
         else {
 		    echo 'Nothing to save';
             exit();
         }
 
+        // new post is the last user post
         $post = Post::where('user_id',$user_id)
             ->take(1)
             ->orderBy('id','DESC')
-            ->select('id')
-            ->get();
+            ->first();
 
-		$user = User::where(
-		    'id',$user_id
-        )->select('id','surname','name','avatar')->get();
+		$user = $post->user()->where('id',$user_id)->first();
 
-		$profileLink = ProfileLink::where(
-		    'user_id',$user_id
-        )->select('link')->get();
+		$profileLink = $user->profileLink()->first()->link;
 
 		$posts = [];
 		$new_post = (object) [
-		    'id' => $post[0]->id,
-            'surname' => $user[0]->surname,
-            'name' => $user[0]->name,
-            'avatar' => $user[0]->avatar,
+		    'id' => $post->id,
+            'author' => [
+               'surname' => $user->surname,
+               'name' => $user->name,
+                'link' => $profileLink,
+                'avatar' => $user->avatar
+            ],
             'creation_date' => 'Менее минуты назад',
-            'text' => $message,
-            'link' => $profileLink[0]->link
+            'text' => $message
         ];
 
+        if(isset($photos) || isset($attachments))
+        {
+            $new_post->attachments = new \stdClass();
+        }
+
         // if user attached photos to the post then include them in object
-		if(isset($photos)) $new_post->photos = $photos;
-		if(isset($attachments)) $new_post->attachments = $addPostInfo['files'];
+		if(isset($photos)) $new_post->attachments->photos = $photos;
+		if(isset($attachments)) $new_post->attachments->files = $addPostInfo['files'];
 
 		array_push($posts,$new_post);
 
 		// remove files from session
-        $request->session()->forget('news');
+        request()->session()->forget('news');
 
-		$result = view('post', [
-			'posts' => $posts
-		]);
+		$result = view('post', compact('posts'));
 
 		echo $result;
 	}

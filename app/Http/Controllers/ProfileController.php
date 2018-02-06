@@ -1,44 +1,42 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use App\Http\Interfaces\Services\ILeftMenu;
-use App\User;
-use App\ProfileLink;
-use App\Profile;
-use App\Http\Controllers\Controller;
+use App\Models\User;
+use App\Models\ProfileLink;
 use App\Http\Middleware\RedirectIfNotAuthenticated;
 
 class ProfileController extends Controller
 {
 
-	public function __construct()
-	{
-		$this->middleware(RedirectIfNotAuthenticated::class);
-	}
+    public function __construct()
+    {
+        $this->middleware(RedirectIfNotAuthenticated::class);
+    }
 
-	public function index($profileNameOrId,ILeftMenu $ILeftMenu)
-	{
-		$profileLink = ProfileLink::where('link',$profileNameOrId)->select('user_id','link')->get();
+    public function index($profileNameOrId,ILeftMenu $ILeftMenu)
+    {
+        $profileLink = ProfileLink::where('link',$profileNameOrId)->select('user_id','link')->get();
 
-		if(isset($profileLink[0]))
-		{
-			$leftMenuLinks = $ILeftMenu->getLinks();
+        if(isset($profileLink[0]))
+        {
+            $leftMenuLinks = $ILeftMenu->getLinks();
 
-			$user_id = $profileLink[0]->user_id;
+            $user_id = $profileLink[0]->user_id;
 
-			$user = User::where('users.id',$user_id)
+            $user = User::where('users.id',$user_id)
                 ->join('profile','profile.user_id','=','users.id')
-                ->select('users.surname','users.name','users.birth','users.avatar','profile.city','profile.school','profile.university')
-                ->get();
+                ->select(
+                    'users.surname','users.name','users.birth','users.avatar',
+                    'profile.city','profile.school','profile.university'
+                )->firstOrFail();
 
-			return view('profile', [
-				'leftMenuLinks' => $leftMenuLinks,
-                'user' => $user[0]
-			]);
-		}
-		else
-		{
-			abort(404);
-		}
-	}
+            return view('profile',compact('leftMenuLinks','user'));
+        }
+        else
+        {
+            abort(404);
+        }
+    }
 }

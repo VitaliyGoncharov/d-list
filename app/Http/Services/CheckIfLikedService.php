@@ -11,10 +11,10 @@ class CheckIfLikedService implements ICheckIfLiked
      * @param $like
      * @param $auth
      */
-    public function __construct($like,$auth)
+    public function __construct($like)
     {
         $this->like = $like;
-        $this->auth = $auth;
+        $this->auth = request()->user();
     }
 
     /**
@@ -24,7 +24,7 @@ class CheckIfLikedService implements ICheckIfLiked
     public function check(int $postId)
     {
         // get the current user id
-        $userId = $this->auth::user()->id;
+        $userId = $this->auth->id;
 
         // when user likes post the record is created in the `likes` table
         // so if he liked post before, then record would exist in `likes` table

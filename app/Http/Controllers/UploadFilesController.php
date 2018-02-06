@@ -1,10 +1,7 @@
 <?php
 namespace App\Http\Controllers;
 
-use Auth;
-use App\File;
-use SplFileInfo;
-use Illuminate\Http\Request;
+use App\Repositories\FileRepository;
 use App\Http\Controllers\Controller;
 
 
@@ -18,16 +15,16 @@ class UploadFilesController extends Controller
 	 *	@return $path_from_root	(It's path where file was saved)
 	 ******************************************************************************************
 	 **/
-	public function uploadFiles(Request $request)
+	public function uploadFiles(FileRepository $fileRepository)
 	{
-		$user_id = Auth::user()->id;
+		$user_id = request()->user()->id;
 		
 		$filename = $_FILES['userfile']['name'];
 
 		$user_folder_path = __DIR__.'/../../../public/downloads/'.$user_id;
 
 		// substr(strrchr($filename,'.'), 1);
-		$info = new SplFileInfo($filename);
+		$info = new \SplFileInfo($filename);
 		$extension = $info->getExtension();
 
 		$first_lvl = $user_folder_path.'/'.substr(md5($filename),0,2);
@@ -57,18 +54,18 @@ class UploadFilesController extends Controller
 
 					$i = 0;
 
-                    if($request->session()->has('news.addPost.files')) {
-                        $files = $request->session()->get('news.addPost.files');
+                    if(request()->session()->has('news.addPost.files')) {
+                        $files = request()->session()->get('news.addPost.files');
                         $i = count($files);
                     }
 
-					$request->session()->put('news.addPost.files.'.$i,$path_from_root);
+                    request()->session()->put('news.addPost.files.'.$i,$path_from_root);
 
-                    $file = new File();
-                    $file->user_id = $user_id;
-                    $file->filename = $filename;
-                    $file->src = $path_from_root;
-                    $file->save();
+                    $fileRepository->create([
+                       'user_id' => $user_id,
+                       'filename' => $filename,
+                       'src' => $path_from_root
+                    ]);
 
                     echo $path_from_root;
 				}

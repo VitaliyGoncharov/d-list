@@ -2,15 +2,14 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\ActivateUser;
-use App\User;
+use App\Models\ActivateUser;
+use App\Models\User;
 use DateTime;
 use Illuminate\Validation\Rule;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Http\Request;
-use Illuminate\Auth\Events\Registered;
 use App\Http\Controllers\Auth\GenerateKeyController as GenerateKey;
 use App\Http\Controllers\Auth\SendMailController as SendMail;
 use App\Http\Controllers\Auth\SendGoogleRecaptcha as SendRecaptcha;
@@ -101,7 +100,7 @@ class RegisterController extends Controller
      * Create a new user instance after a valid registration.
      *
      * @param  array  $data
-     * @return \App\User
+     * @return \App\Models\User
      */
     protected function create(array $data)
     {
@@ -151,8 +150,6 @@ class RegisterController extends Controller
       ///////////////////////////
       $act_key = $generateKey->generate_key(15);
       ///////////////////////////
-
-      //#35e312
 
       // set server time to utc
       date_default_timezone_set('UTC');

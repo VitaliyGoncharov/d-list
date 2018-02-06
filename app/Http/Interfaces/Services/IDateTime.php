@@ -5,7 +5,7 @@ use Illuminate\Http\Request;
 
 interface IDateTime
 {
-    public function __construct($request);
+    public function __construct();
 
     public function changeDateTime(string $dateTime);
 }

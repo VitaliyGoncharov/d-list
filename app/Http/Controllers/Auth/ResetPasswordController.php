@@ -5,8 +5,8 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use App\PasswordReset;
-use App\User;
+use App\Models\PasswordReset;
+use App\Models\User;
 
 class ResetPasswordController extends Controller
 {

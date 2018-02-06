@@ -417,11 +417,11 @@ $('.share').click(function () {
  *  Cancel sending data on click on submit button
  *************************************************
  */
-$(function () {
+/*$(function () {
     $('form').submit(function () {
         return false;
     });
-});
+});*/
 /******* END *******/
 
 /**

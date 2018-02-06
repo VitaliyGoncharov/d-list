@@ -18,7 +18,7 @@ class CreatePostsTable extends Migration
             $table->text('text')->nullable();
             $table->unsignedInteger('user_id');
             $table->string('photos',1000)->nullable();
-            $table->string('attachments',1000)->nullable();
+            $table->string('files',1000)->nullable();
             $table->unsignedSmallInteger('likes')->nullable();
             $table->unsignedSmallInteger('dislikes')->nullable();
             $table->dateTime('created_at');

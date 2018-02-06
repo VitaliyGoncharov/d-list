@@ -1,11 +1,11 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class Post extends Authenticatable
+class Comment extends Authenticatable
 {
     use Notifiable;
 
@@ -14,9 +14,7 @@ class Post extends Authenticatable
      *
      * @var array
      */
-    protected $fillable = [
-        'text', 'photos', 'attachments'
-    ];
+    protected $fillable = ['*'];
 
     /**
      * The attributes that should be hidden for arrays.
@@ -27,11 +25,12 @@ class Post extends Authenticatable
 
     ];
 
-    protected $guarded = [
-        'user_id','created_at'
-    ];
-
     public $timestamps = false;
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 
     public static function boot()
     {

@@ -14,7 +14,7 @@ class SendMailController extends Controller
         $this->subject      = $user_id ? 'Подтверждение регистрации' : 'Восстановление пароля';
         $this->view         = $user_id ? 'emails.sendActivateKey' : 'emails.sendResetKey';
 
-        $this->actLink = $user_id ? "$domain/activate/$user_id/$key" : "http://devvit.ru/password/reset/$email/$key";
+        $this->actLink = $user_id ? "$domain/activate/$user_id/$key" : "$domain/password/reset/$email/$key";
 
         
 

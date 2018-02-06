@@ -2,8 +2,10 @@
 
 namespace App\Providers;
 
-use App\Comment;
-use App\Dislike;
+use App\Http\Interfaces\Services\IAttachment;
+use App\Http\Services\AttachmentService;
+use App\Models\Comment;
+use App\Models\Dislike;
 use App\Http\Interfaces\Services\ICheckIfDisliked;
 use App\Http\Interfaces\Services\ICheckIfLiked;
 use App\Http\Interfaces\Services\IComment;
@@ -18,12 +20,16 @@ use App\Http\Services\DateTimeService;
 use App\Http\Services\LeftMenuService;
 use App\Http\Services\NewPostInfoService;
 use App\Http\Services\PostService;
-use App\Like;
-use App\ProfileLink;
+use App\Models\Like;
+use App\Models\ProfileLink;
+use App\Models\User;
+use App\Repositories\FileRepository;
+use App\Repositories\PostRepository;
+use App\Repositories\UserRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\ServiceProvider;
-use App\Post;
-use App\File;
+use App\Models\Post;
+use App\Models\File;
 use Illuminate\Support\Facades\Auth;
 
 class NewsServiceProvider extends ServiceProvider
@@ -46,12 +52,11 @@ class NewsServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->bind(IPost::class, function () {
-            return new PostService(new Post,new File,new Auth);
+            return new PostService(new PostRepository(new Post),new DateTimeService,new AttachmentService(new FileRepository(new File)));
         });
 
         $this->app->bind(IDateTime::class, function () {
-            $request = $this->app->make(Request::class);
-            return new DateTimeService($request);
+            return new DateTimeService();
         });
 
         $this->app->bind(IComment::class, function () {
@@ -59,20 +64,27 @@ class NewsServiceProvider extends ServiceProvider
         });
 
         $this->app->bind(ICheckIfLiked::class, function () {
-            return new CheckIfLikedService(new Like,new Auth);
+            return new CheckIfLikedService(new Like);
         });
 
         $this->app->bind(ICheckIfDisliked::class, function () {
-            return new CheckIfDislikedService(new Dislike,new Auth);
+            return new CheckIfDislikedService(new Dislike);
         });
 
         $this->app->bind(ILeftMenu::class, function () {
-            return new LeftMenuService(new ProfileLink,new Auth);
+            return new LeftMenuService(new ProfileLink);
         });
 
         $this->app->bind(INewPostInfo::class, function () {
-            $request = $this->app->make(Request::class);
-            return new NewPostInfoService($request,new File,new Auth);
+            return new NewPostInfoService(new File);
+        });
+
+        $this->app->bind(FileRepository::class, function () {
+            return new FileRepository(new File);
+        });
+
+        $this->app->bind(UserRepository::class, function () {
+            return new UserRepository(new User);
         });
     }
 }

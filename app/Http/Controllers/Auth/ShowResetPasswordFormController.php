@@ -2,7 +2,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\PasswordReset;
+use App\Models\PasswordReset;
 use DateTime;
 use Illuminate\Support\Facades\DB; 
 

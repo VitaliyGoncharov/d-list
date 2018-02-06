@@ -5,9 +5,9 @@ use App\Http\Interfaces\Services\IDateTime;
 
 class DateTimeService implements IDateTime
 {
-    public function __construct($request)
+    public function __construct()
     {
-        $this->request = $request;
+        $this->request = request();
     }
 
     public function changeDateTime(string $dateTime)
@@ -51,6 +51,7 @@ class DateTimeService implements IDateTime
         //get to know the curDateTime creating time according user timezone
         $user_utc = $this->request->session()->get('utc');
         $oldDateTime = $dateTime->modify("+$user_utc hour");
+
 
         //get the server date
         date_default_timezone_set('UTC');

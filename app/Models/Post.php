@@ -1,11 +1,11 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class Comment extends Authenticatable
+class Post extends Authenticatable
 {
     use Notifiable;
 
@@ -14,7 +14,9 @@ class Comment extends Authenticatable
      *
      * @var array
      */
-    protected $fillable = ['*'];
+    protected $fillable = [
+        'text', 'photos', 'attachments'
+    ];
 
     /**
      * The attributes that should be hidden for arrays.
@@ -25,7 +27,31 @@ class Comment extends Authenticatable
 
     ];
 
+    protected $guarded = [
+        'user_id','created_at'
+    ];
+
     public $timestamps = false;
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function comment()
+    {
+        return $this->hasMany(Comment::class);
+    }
+
+    public function like()
+    {
+        return $this->hasMany(Like::class);
+    }
+
+    public function dislike()
+    {
+        return $this->hasMany(Dislike::class);
+    }
 
     public static function boot()
     {

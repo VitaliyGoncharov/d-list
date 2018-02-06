@@ -1,13 +1,15 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class User extends Authenticatable
+class PasswordReset extends Authenticatable
 {
     use Notifiable;
+
+    protected $table = 'password_reset';
 
     /**
      * The attributes that are mass assignable.
@@ -15,8 +17,10 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'surname', 'name', 'email', 'password', 'gender', 'birth', 'phone', 'avatar', 'activate',
+        'email', 'token', 'send_date'
     ];
+
+    public $timestamps = false;
 
     /**
      * The attributes that should be hidden for arrays.
@@ -24,6 +28,6 @@ class User extends Authenticatable
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token',
+        'send_date',
     ];
 }
