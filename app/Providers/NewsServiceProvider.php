@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Http\Controllers\DislikeController;
+use App\Http\Controllers\LikeController;
 use App\Http\Interfaces\Services\IAttachment;
 use App\Http\Services\AttachmentService;
 use App\Models\Comment;

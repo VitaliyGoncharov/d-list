@@ -48,7 +48,14 @@ Route::post('/uploadfiles', 'UploadFilesController@uploadFiles');
 Route::post('/addpost','AddNewPostController@addPost');
 Route::post('/loadpostscol','NewsController@loadPostsCollection');
 Route::post('/addcomment','AddCommentController@addComment');
-Route::post('/likes','LikesController@index');
+
+
+Route::post('/like/add','LikeController@add');
+Route::post('/like/delete','LikeController@delete');
+
+Route::post('/dislike/add','DislikeController@add');
+Route::post('/dislike/delete','DislikeController@delete');
+
 Route::post('/deleteAttachedPhoto','AddNewPostController@deleteAttachedPhoto');
 Route::post('/deleteAttachedFile','AddNewPostController@deleteAttachedFile');
 

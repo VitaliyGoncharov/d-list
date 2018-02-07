@@ -341,17 +341,16 @@ $('.pjax-container').on('click', '.likes', function () {
 
     // learn what action user did
     if ($(this).children().hasClass('green')) {
-        action = 'delete like';
+        this.url = '/like/delete';
     }
     else {
-        action = 'like';
+        this.url = '/like/add';
     }
 
     if (dislikes.children().hasClass('red')) {
         dislikes.children().toggleClass('red');
     }
     $(this).children().toggleClass('green');
-    this.action = action;
 
     // send request to the server to set or unset like or dislike
     sendLikeOrDislike.call(this);
@@ -363,17 +362,16 @@ $('.pjax-container').on('click', '.dislikes', function () {
 
     // learn what action user did
     if ($(this).children().hasClass('red')) {
-        action = 'delete dislike';
+        this.url = '/dislike/delete';
     }
     else {
-        action = 'dislike';
+        this.url = '/dislike/add';
     }
 
     if (likes.children().hasClass('green')) {
         likes.children().toggleClass('green');
     }
     $(this).children().toggleClass('red');
-    this.action = action;
 
     // send request to the server to set or unset like or dislike
     sendLikeOrDislike.call(this);
@@ -389,11 +387,10 @@ function sendLikeOrDislike() {
     let post_id = $(this).parents('.post').attr('data-post-id');
 
     formData.append('post_id', post_id);
-    formData.append('action', this.action);
 
     $.ajax({
         type: 'POST',
-        url: '/likes',
+        url: this.url,
         headers: {
             'X-CSRF-TOKEN': $('input[name="_token"]').attr('value')
         },

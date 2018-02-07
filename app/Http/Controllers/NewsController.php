@@ -28,10 +28,6 @@ class NewsController extends Controller
      * Show the application dashboard.
      *
      * @param IPost $IPost
-     * @param IDateTime $IDateTime
-     * @param IComment $IComment
-     * @param ICheckIfLiked $ICheckIfLiked
-     * @param ICheckIfDisliked $ICheckIfDisliked
      * @param ILeftMenu $ILeftMenu
      * @param INewPostInfo $INewPostInfo
      * @return view ()
