@@ -2,11 +2,13 @@
 
 namespace App\Providers;
 
+use App\Http\Controllers\ChatController;
 use App\Http\Controllers\DislikeController;
 use App\Http\Controllers\LikeController;
 use App\Http\Interfaces\Services\IAttachment;
 use App\Http\Services\AttachmentService;
 use App\Models\Comment;
+use App\Models\Conversation;
 use App\Models\Dislike;
 use App\Http\Interfaces\Services\ICheckIfDisliked;
 use App\Http\Interfaces\Services\ICheckIfLiked;
@@ -29,6 +31,7 @@ use App\Repositories\FileRepository;
 use App\Repositories\PostRepository;
 use App\Repositories\UserRepository;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\ServiceProvider;
 use App\Models\Post;
 use App\Models\File;
@@ -53,6 +56,15 @@ class NewsServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        $this->app->bind(ILeftMenu::class, function () {
+            return new LeftMenuService(new ProfileLink());
+        });
+
+        $this->app->bind(ChatController::class, function () {
+            return new ChatController(App::make(ILeftMenu::class), new Conversation());
+        });
+
+
         $this->app->bind(IPost::class, function () {
             return new PostService(new PostRepository(new Post),new DateTimeService,new AttachmentService(new FileRepository(new File)));
         });
@@ -73,10 +85,6 @@ class NewsServiceProvider extends ServiceProvider
             return new CheckIfDislikedService(new Dislike);
         });
 
-        $this->app->bind(ILeftMenu::class, function () {
-            return new LeftMenuService(new ProfileLink);
-        });
-
         $this->app->bind(INewPostInfo::class, function () {
             return new NewPostInfoService(new File);
         });
@@ -87,6 +95,10 @@ class NewsServiceProvider extends ServiceProvider
 
         $this->app->bind(UserRepository::class, function () {
             return new UserRepository(new User);
+        });
+
+        $this->app->bind(User::class, function () {
+            return new User();
         });
     }
 }

@@ -19,10 +19,12 @@ class CreatePostsTable extends Migration
             $table->unsignedInteger('user_id');
             $table->string('photos',1000)->nullable();
             $table->string('files',1000)->nullable();
-            $table->unsignedSmallInteger('likes')->nullable();
-            $table->unsignedSmallInteger('dislikes')->nullable();
+            $table->unsignedInteger('likes')->nullable();
+            $table->unsignedInteger('dislikes')->nullable();
             $table->dateTime('created_at');
         });
+
+        DB::statement('ALTER TABLE posts ADD FULLTEXT posts_fulltext_index(text)');
     }
 
     /**
@@ -32,6 +34,7 @@ class CreatePostsTable extends Migration
      */
     public function down()
     {
+        DB::statement('DROP INDEX posts_fulltext_index on posts');
         Schema::dropIfExists('posts');
     }
 }

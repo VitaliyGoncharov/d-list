@@ -35,6 +35,7 @@
     <script src="{{ asset('js/jquery.pjax.js') }}" defer></script>
     <script src="{{ asset('js/gallery.js') }}" defer></script>
     <script src="{{ asset('js/main.js') }}" defer></script>
+    {{--<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js"></script>--}}
 @endif
 
 </body>

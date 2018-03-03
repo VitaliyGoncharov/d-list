@@ -42,7 +42,7 @@ class PostService implements IPost
 
             // get the profileLink model bounded to user model
             // In short, we just get the user profile link
-            $post->author->link = $user->profileLink()->first()->link;
+            $post->author->link = $user->profileLink();
 
             $post->attachments = $this->IAttachment->get($post);
 
@@ -51,7 +51,7 @@ class PostService implements IPost
             if(!empty($post->comment))
             {
                 $post->comment->author = $post->comment->user()->first();
-                $post->comment->author->link = $post->comment->author->profileLink()->first()->link;
+                $post->comment->author->link = $post->comment->author->profileLink();
             }
 
             $userId = request()->user()->id;

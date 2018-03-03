@@ -28,7 +28,7 @@ class ProfileController extends Controller
             $user = User::where('users.id',$user_id)
                 ->join('profile','profile.user_id','=','users.id')
                 ->select(
-                    'users.surname','users.name','users.birth','users.avatar',
+                    'users.id','users.surname','users.name','users.birth','users.avatar',
                     'profile.city','profile.school','profile.university'
                 )->firstOrFail();
 

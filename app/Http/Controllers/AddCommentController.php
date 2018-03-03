@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use Auth;
-use App\Comment;
-use App\ProfileLink;
-use App\User;
+use App\Models\Comment;
+use App\Models\ProfileLink;
+use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use App\Http\Interfaces\Services\INewPostInfo;
@@ -8,12 +9,12 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
 
-class AddNewPostController extends Controller 
+class AddNewPostController extends Controller
 {
-	public function addPost(PostRepository $postRepository,INewPostInfo $INewPostInfo)
-	{
-        $user_id		= request()->user()->id;
-		$message		= request()->input('message');
+    public function addPost(PostRepository $postRepository,INewPostInfo $INewPostInfo)
+    {
+        $user_id = request()->user()->id;
+        $message = request()->input('message');
 
         $addPostInfo = $INewPostInfo->getNewPostInfo();
         $saveToPost = [
@@ -43,11 +44,13 @@ class AddNewPostController extends Controller
          * If post has at least one of this below then save the post in DB
          * otherwise exit
          */
-		if($message || $photos || $attachments) {
+        if($message || $photos || $attachments)
+        {
             $postRepository->create($saveToPost);
         }
-        else {
-		    echo 'Nothing to save';
+        else
+        {
+            echo 'Nothing to save';
             exit();
         }
 
@@ -57,16 +60,16 @@ class AddNewPostController extends Controller
             ->orderBy('id','DESC')
             ->first();
 
-		$user = $post->user()->where('id',$user_id)->first();
+        $user = $post->user()->where('id',$user_id)->first();
 
-		$profileLink = $user->profileLink()->first()->link;
+        $profileLink = $user->profileLink();
 
-		$posts = [];
-		$new_post = (object) [
-		    'id' => $post->id,
-            'author' => [
-               'surname' => $user->surname,
-               'name' => $user->name,
+        $posts = [];
+        $new_post = (object)[
+            'id' => $post->id,
+            'author' => (object) [
+                'surname' => $user->surname,
+                'name' => $user->name,
                 'link' => $profileLink,
                 'avatar' => $user->avatar
             ],
@@ -80,27 +83,27 @@ class AddNewPostController extends Controller
         }
 
         // if user attached photos to the post then include them in object
-		if(isset($photos)) $new_post->attachments->photos = $photos;
-		if(isset($attachments)) $new_post->attachments->files = $addPostInfo['files'];
+        if(isset($photos)) $new_post->attachments->photos = $photos;
+        if(isset($attachments)) $new_post->attachments->files = $addPostInfo['files'];
 
-		array_push($posts,$new_post);
+        array_push($posts,$new_post);
 
-		// remove files from session
+        // remove files from session
         request()->session()->forget('news');
 
-		$result = view('post', compact('posts'));
+        $result = view('post',compact('posts'));
 
-		echo $result;
-	}
+        echo $result;
+    }
 
-	public function deleteAttachedPhoto(Request $request)
+    public function deleteAttachedPhoto(Request $request)
     {
         $photo_src = $request->input('src');
         $photos = $request->session()->get('news.addPost.files');
 
         foreach($photos as $key => $photo)
         {
-            if($photo === $photo_src)
+            if($photo===$photo_src)
             {
                 $request->session()->forget('news.addPost.files');
                 unset($photos[$key]);
@@ -119,7 +122,7 @@ class AddNewPostController extends Controller
 
         foreach($files as $key => $file)
         {
-            if($file === $file_src)
+            if($file===$file_src)
             {
                 $request->session()->forget('news.addPost.files');
                 unset($files[$key]);

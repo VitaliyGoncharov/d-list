@@ -15,7 +15,46 @@ $(document).ready(function () {
         console.log('READY');
         resizeImages();
     }
+
+    // for search
+    let ids = [
+        'friends__search__textarea'
+    ];
+
+    Function.prototype.delayed = function (ms, selector) {
+        let timer = 0;
+        let callback = this;
+
+        return function() {
+            clearTimeout(timer);
+            timer = setTimeout(function () {
+                callback(selector);
+            }, ms);
+        };
+    };
+
+    ids.forEach(function(element) {
+        let selector = '#' + element;
+        $(selector).on('keyup', searchRequest.delayed(500, selector));
+    });
 });
+
+function searchRequest(selector) {
+    let val = $(selector).val();
+
+    $.ajax({
+        type: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': $('input[name="_token"]').attr('value')
+        },
+        url: '/friend/search',
+        data: 'key=' + val,
+        success: function (data) {
+            $('#friends__list').empty();
+            $('#friends__list').append(data);
+        }
+    });
+}
 
 /**
  ********************************************************
@@ -715,4 +754,133 @@ $('.pjax-container').on('click','.close__File',function (e) {
         }
     });
 });
+
+/**
+ * Send friend request
+ */
+function sendFriendRequest(e) {
+    e.preventDefault();
+    let elem = $(e.target);
+    let link = elem.attr('href');
+
+    $.ajax({
+        type: 'POST',
+        url: link,
+        headers: {
+            'X-CSRF-TOKEN': $('input[name="_token"]').attr('value')
+        },
+        success: function (data) {
+            let wasSent = $('<div></div>')
+                .attr('class', 'request_sended')
+                .html('Request was sended');
+            elem.replaceWith(wasSent);
+        }
+    });
+
+    console.log('Request was sent');
+}
+
+/**
+ * Cancel friend request
+ *
+ * @param e
+ */
+function cancelFriendRequest(e) {
+    e.preventDefault();
+    let elem = $(e.target);
+    let link = elem.attr('href');
+
+    $.ajax({
+        type: 'POST',
+        url: link,
+        headers: {
+            'X-CSRF-TOKEN': $('input[name="_token"]').attr('value')
+        },
+        success: function (data) {
+            elem.parents('.friend__list__item').remove();
+            console.log('Request was deleted');
+        }
+    });
+}
+
+/**
+ * Cancel friend request
+ *
+ * @param e
+ */
+function acceptFriendRequest(e) {
+    e.preventDefault();
+    let elem = $(e.target);
+    let link = elem.attr('href');
+
+    $.ajax({
+        type: 'POST',
+        url: link,
+        headers: {
+            'X-CSRF-TOKEN': $('input[name="_token"]').attr('value')
+        },
+        success: function (data) {
+            elem.parents('.friend__list__item').remove();
+            console.log('Friend was added!');
+        }
+    });
+}
+
+/**
+ * Send message using websockets
+ */
+(function () {
+    var socket = io(':3000');
+
+    socket.on('message', function (data) {
+        console.log('From server:', data);
+    }).on('server-info', function (data) {
+        console.info('From server!:', data);
+    });
+
+    socket.on('error', function (error) {
+        console.warn('Error', error);
+    });
+
+    socket.on('chat:message', function (data) {
+        let msg = $('<div>');
+        msg.attr('class','messagePartner')
+            .html(data);
+        let msgWrap = $('<div>');
+        msgWrap.attr('class','messageInChat')
+            .html(msg);
+        $('#msgsWrap').append(msgWrap);
+    });
+
+    $('#sendMessageButton').on('click', function () {
+        let to = location.href.match(/([^/]+)$/)[0];
+        let msg = $('#messageTextfield').html();
+
+        let msgDiv = $('<div>');
+        msgDiv.attr('class','messageUser')
+            .html(msg);
+        let msgWrap = $('<div>');
+        msgWrap.attr('class','messageInChat')
+            .html(msgDiv);
+        $('#msgsWrap').append(msgWrap);
+
+        socket.emit('userMessage', {
+            'msg': msg,
+            'to': to
+        });
+    });
+
+    /*
+    conn.onmessage = function(e) {
+        let msg = $('<div>');
+        msg.attr('class','messagePartner')
+            .html(e.data);
+        let msgWrap = $('<div>');
+        msgWrap.attr('class','messageInChat')
+            .html(msg);
+        $('#msgsWrap').append(msgWrap);
+
+        console.log(e.data);
+    };*/
+})();
 

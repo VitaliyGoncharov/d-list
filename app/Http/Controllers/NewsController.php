@@ -42,7 +42,17 @@ class NewsController extends Controller
         // check if user attached files to the new post which he didn't post
         $addPostInfo = $INewPostInfo->getNewPostInfo();
 
-        return view('news',compact('leftMenuLinks','posts','addPostInfo'));
+        return view('news.main',compact('leftMenuLinks','posts','addPostInfo'));
+    }
+
+    public function renderSearch(IPost $IPost,ILeftMenu $ILeftMenu)
+    {
+        $posts = $IPost->get();
+
+        // load profile link from `profile_link` table for left menu
+        $leftMenuLinks = $ILeftMenu->getLinks();
+
+        return view('news.search',compact('leftMenuLinks','posts'));
     }
 
     // load posts when user reach the end of web page
