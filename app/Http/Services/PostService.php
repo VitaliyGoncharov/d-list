@@ -1,18 +1,18 @@
 <?php
 namespace App\Http\Services;
 
-use App\Http\Interfaces\Services\IDateTime;
-use App\Http\Interfaces\Services\IPost;
-use App\Http\Interfaces\Services\IAttachment;
-use App\Repositories\PostRepository;
+use App\Models\Post;
+use Illuminate\Support\Facades\App;
 
-class PostService implements IPost
+class PostService
 {
-    public function __construct(PostRepository $postRepository,IDateTime $IDateTime,IAttachment $IAttachment)
+    /**
+     * PostService constructor.
+     * @param Post $post
+     */
+    public function __construct(Post $post)
     {
-        $this->postRepository = $postRepository;
-        $this->IDateTime = $IDateTime;
-        $this->IAttachment = $IAttachment;
+        $this->post = $post;
     }
 
     public function get(int $num = 10,$lastPostId = null)
@@ -21,59 +21,14 @@ class PostService implements IPost
         // we get "10" posts with id less than $lastPostId
         $lastPostId = (int) $lastPostId;
 
-        $posts = $this->postRepository->get($num,$lastPostId);
+        $posts = $this->post->get($num,$lastPostId);
 
         if(!$posts)
         {
-//            throw new PostException('no posts');
             return false;
         }
 
-        foreach($posts as $key => $post)
-        {
-            // make post created_at time user-friendly
-            // 2000-01-01 00:01:01 => January 1, 2000 at 00:01
-            $beautyDate = $this->IDateTime->changeDateTime($post->created_at);
-            $post->creation_date = $beautyDate;
-
-            // get the bounded user model
-            $user = $post->user()->first();
-            $post->author = $user;
-
-            // get the profileLink model bounded to user model
-            // In short, we just get the user profile link
-            $post->author->link = $user->profileLink();
-
-            $post->attachments = $this->IAttachment->get($post);
-
-            $post->comment = $post->comment()->take(1)->orderBy('id')->first();
-
-            if(!empty($post->comment))
-            {
-                $post->comment->author = $post->comment->user()->first();
-                $post->comment->author->link = $post->comment->author->profileLink();
-            }
-
-            $userId = request()->user()->id;
-
-            // assign property $post->like if current user liked post
-            $liked = $post->like()->where('user_id',$userId)->first();
-
-            if(!empty($liked))
-            {
-                $post->liked = true;
-            }
-            else
-            {
-                // if user didn't like, maybe he disliked
-                $disliked = $post->dislike()->where('user_id',$userId)->first();
-
-                if(!empty($disliked))
-                {
-                    $post->disliked = true;
-                }
-            }
-        }
+        $posts = $this->preparePosts($posts,1);
 
         // $posts is the Collection which include array of items
         // This works: $posts[0]->id
@@ -83,6 +38,38 @@ class PostService implements IPost
         {
             $lastPostId = end($posts_collection)->id;
             $posts->lastPostId = $lastPostId;
+        }
+
+        return $posts;
+    }
+
+    /**
+     * @param $posts
+     * @param $comsNum Number of comments to get for each post
+     * @return mixed
+     */
+    public function preparePosts($posts,$comsNum = 1)
+    {
+        $dateSvc = App::make(DateService::class);
+        $attachSvc = App::make(AttachmentService::class);
+        $voteSvc = App::make(VoteService::class);
+        $commentSvc = App::make(CommentService::class);
+
+        foreach($posts as $post)
+        {
+            // make post created_at time user-friendly
+            // 2000-01-01 00:01:01 => January 1, 2000 at 00:01
+            $post->creation_date = $dateSvc->changeDateTime($post->created_at);
+
+            // get the bounded user model (you can find method in Post model)
+            $post->author = $post->user();
+
+            $post->attachments = $attachSvc->get($post);
+            $post->comments = $commentSvc->getComments($post->id,$comsNum);
+
+            $voteData = $voteSvc->check($post->id);
+            $post->liked = $voteData['liked'] ?? false;
+            $post->disliked = $voteData['disliked'] ?? false;
         }
 
         return $posts;

@@ -3,7 +3,7 @@ namespace App\Http\Services;
 
 use App\Http\Interfaces\Services\IDateTime;
 
-class DateTimeService implements IDateTime
+class DateService implements IDateTime
 {
     public function __construct()
     {

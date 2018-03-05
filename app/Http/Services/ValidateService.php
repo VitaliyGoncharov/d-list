@@ -7,9 +7,6 @@ class ValidateService
     {
         $postIdIsNumber = preg_match('~^[\d]+$~',$postId);
 
-        if(!$postIdIsNumber)
-            return false;
-        else
-            return true;
+        return $postIdIsNumber ? true : false;
     }
 }

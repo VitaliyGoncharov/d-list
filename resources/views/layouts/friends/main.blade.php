@@ -6,7 +6,7 @@
         <div class="centerCol_inner friends">
             <div id="friends__search">
                 <div><i class="fa fa-search" aria-hidden="true"></i></div>
-                <textarea id="friends__search__textarea" rows="1" placeholder="Найти"></textarea>
+                <textarea id="friends__search__textarea" rows="1" onkeyup="searchDelay(this,searchFriends)" data-url="/friend/search" placeholder="Найти" spellcheck="false"></textarea>
             </div>
 
             @yield('friends')

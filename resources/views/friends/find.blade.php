@@ -15,10 +15,10 @@
 
                 @isset($person->request)
                     <div class="request_sended">
-                        Request was sended
+                        Запрос отправлен
                     </div>
                 @else
-                    <a class="friend_send_request" href="/friend/request/send/{{ $person->id }}" onclick="sendFriendRequest(event)">+</a>
+                    <a class="friend_send_request" href="/friend/request/send" onclick="sendFriendRequest(event)" data-uid="{{ $person->id }}">+</a>
                 @endisset
             </div>
         @endforeach

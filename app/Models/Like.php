@@ -12,13 +12,19 @@ class Like extends Model
 
     public $timestamps = false;
 
+    public function checkIfExists($postId, $userId)
+    {
+        return $this->where([
+            ['post_id',$postId],
+            ['user_id',$userId]
+        ])->select('id')->first();
+    }
+
     public function createByUserIdAndPostId(int $userId,int $postId)
     {
         $this->user_id = $userId;
         $this->post_id = $postId;
-        $this->save();
-
-        return true;
+        return $this->save();
     }
 
     public function getByUserIdAndPostId(int $userId,int $postId)
@@ -31,11 +37,9 @@ class Like extends Model
 
     public function deleteByUserIdAndPostId(int $userId,int $postId)
     {
-        $this->where([
+        return $this->where([
             ['user_id',$userId],
             ['post_id',$postId]
         ])->delete();
-
-        return true;
     }
 }

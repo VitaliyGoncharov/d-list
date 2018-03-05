@@ -13,7 +13,7 @@
                     <a class="friend_write_msg" href="/msg/write{{ $user->id }}">Написать сообщение</a>
                 </div>
 
-                <a class="cancel_request" href="/friend/request/cancel/{{ $user->id }}" onclick="cancelFriendRequest(event)">&times;</a>
+                <a class="cancel_request" href="/friend/request/cancel" onclick="cancelFriendRequest(event)" data-uid="{{ $user->id }}">&times;</a>
             </div>
         @endforeach
     </div>

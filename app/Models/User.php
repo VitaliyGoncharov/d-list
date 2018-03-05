@@ -32,10 +32,9 @@ class User extends Authenticatable
         return $this->hasMany(Post::class);
     }
 
-    public function profileLink()
+    public function profile()
     {
-        $profileLink = $this->hasOne(ProfileLink::class)->first();
-        return $profileLink->link;
+        return $this->hasOne(Profile::class);
     }
 
     public function checkIfExists($userId)
@@ -68,9 +67,9 @@ class User extends Authenticatable
             ->get();
     }
 
-    public function findUsersByExpression($keys, $multiple)
+    public function findByNameOrSurname($keys, $multiple)
     {
-        return $this->select('id','surname','name','birth','phone','avatar')
+        return $this->select('id','surname','name','birth','phone','avatar','link')
             ->where('name','like',"$keys[0]%")
             ->when($multiple, function ($query) use ($keys) {
                 return $query->orWhere('name','like',"$keys[1]%");
@@ -80,5 +79,12 @@ class User extends Authenticatable
                 return $query->orWhere('surname','like',"$keys[1]%");
             })
             ->get();
+    }
+
+    public function findByLink($link)
+    {
+        return $this->select('id','surname','name','birth','phone','avatar','link')
+            ->where('link',$link)
+            ->first();
     }
 }

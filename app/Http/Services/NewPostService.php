@@ -4,21 +4,19 @@ namespace App\Http\Services;
 use App\Http\Interfaces\Services\INewPostInfo;
 use App\Models\File;
 
-class NewPostInfoService implements INewPostInfo
+class NewPostService implements INewPostInfo
 {
     public function __construct(File $file)
     {
         $this->file = $file;
-        $this->request = request();
-        $this->auth = request()->user();
     }
 
     public function getNewPostInfo()
     {
-        if($this->request->session()->has('news.addPost.files'))
+        if(request()->session()->has('news.addPost.files'))
         {
-            $filesSession = $this->request->session()->get('news.addPost.files');
-            $userId = $this->auth->id;
+            $filesSession = request()->session()->get('news.addPost.files');
+            $userId = request()->user()->id;
             // $images will contain all images
             // $files won't contain images
             $images = [];

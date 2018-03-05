@@ -15,45 +15,64 @@ $(document).ready(function () {
         console.log('READY');
         resizeImages();
     }
-
-    // for search
-    let ids = [
-        'friends__search__textarea'
-    ];
-
-    Function.prototype.delayed = function (ms, selector) {
-        let timer = 0;
-        let callback = this;
-
-        return function() {
-            clearTimeout(timer);
-            timer = setTimeout(function () {
-                callback(selector);
-            }, ms);
-        };
-    };
-
-    ids.forEach(function(element) {
-        let selector = '#' + element;
-        $(selector).on('keyup', searchRequest.delayed(500, selector));
-    });
 });
 
-function searchRequest(selector) {
-    let val = $(selector).val();
+function searchDelay(elem, callback) {
+    let ms = 500;
 
-    $.ajax({
-        type: 'POST',
-        headers: {
-            'X-CSRF-TOKEN': $('input[name="_token"]').attr('value')
-        },
-        url: '/friend/search',
-        data: 'key=' + val,
-        success: function (data) {
-            $('#friends__list').empty();
-            $('#friends__list').append(data);
-        }
+    if (typeof timer === 'undefined') {
+        timer = 0;
+    }
+
+    clearTimeout(timer);
+    timer = setTimeout(function () {
+        callback(elem);
+    }, ms);
+}
+
+function sendRequest(sendData, url) {
+    return new Promise(function (res, rej) {
+        $.ajax({
+            type: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': $('input[name="_token"]').attr('value')
+            },
+            url: url,
+            data: sendData,
+            success: function (data) {
+                res(data);
+            }
+        });
     });
+}
+
+function searchPosts(elem) {
+    let val = $(elem).val();
+    let url = $(elem).attr('data-url');
+    let sendData = {keyWords: val};
+
+    let data = sendRequest(sendData, url);
+    data.then(
+        dataFromServer =>  {
+            $('.posts_collection').remove();
+            let posts = $(dataFromServer).css('visibility','visible');
+            $('.centerCol_inner').append(posts);
+        }
+    );
+}
+
+function searchFriends(elem) {
+    let val = $(elem).val();
+    let url = $(elem).attr('data-url');
+    let sendData = {keyWords: val};
+
+    let data = sendRequest(sendData, url);
+    data.then(
+        dataFromServer =>  {
+            $('#friends__list').empty();
+            $('#friends__list').append(dataFromServer);
+        }
+    );
 }
 
 /**
@@ -365,81 +384,50 @@ function uploadFile(DOMelems,file,ifImage) {
     });
 }
 
+function likeAction(e) {
+    e.preventDefault();
+    let elem = $(e.target);
 
-/**
- **********************************************************************
- *  Change the color of thumbs-up and -down on click and hover
- *
- *  Call sendLikeOrDislike() function that makes request to the server
- *  to set like or dislike
- **********************************************************************
- */
-$('.pjax-container').on('click', '.likes', function () {
-    let dislikes = $(this).siblings('.dislikes');
-    let action;
-
-    // learn what action user did
-    if ($(this).children().hasClass('green')) {
-        this.url = '/like/delete';
-    }
-    else {
-        this.url = '/like/add';
+    if (!elem.hasClass('likes')) {
+        elem = elem.parents('.likes');
     }
 
-    if (dislikes.children().hasClass('red')) {
-        dislikes.children().toggleClass('red');
-    }
-    $(this).children().toggleClass('green');
+    let likeExists = elem.children('i').hasClass('green');
+    elem.children().toggleClass('green');
 
-    // send request to the server to set or unset like or dislike
-    sendLikeOrDislike.call(this);
-});
+    likeExists ? unsetLike(elem) : setLike(elem);
+}
 
-$('.pjax-container').on('click', '.dislikes', function () {
-    let likes = $(this).siblings('.likes');
-    let action;
+function setLike(elem) {
+    let url = elem.attr('data-set');
+    let id = elem.attr('data-pid');
 
-    // learn what action user did
-    if ($(this).children().hasClass('red')) {
-        this.url = '/dislike/delete';
-    }
-    else {
-        this.url = '/dislike/add';
-    }
-
-    if (likes.children().hasClass('green')) {
-        likes.children().toggleClass('green');
-    }
-    $(this).children().toggleClass('red');
-
-    // send request to the server to set or unset like or dislike
-    sendLikeOrDislike.call(this);
-});
-
-/**
- **************************************************************
- *  Send request to the server to set or unset like or dislike
- **************************************************************
- */
-function sendLikeOrDislike() {
-    let formData = new FormData();
-    let post_id = $(this).parents('.post').attr('data-post-id');
-
-    formData.append('post_id', post_id);
-
-    $.ajax({
-        type: 'POST',
-        url: this.url,
-        headers: {
-            'X-CSRF-TOKEN': $('input[name="_token"]').attr('value')
-        },
-        data: formData,
-        processData: false,
-        contentType: false,
-        success: function (data) {
-            console.log(data);
+    let req = sendRequest({post_id: id}, url);
+    req.then(
+        response => {
+            if (+response === 0) {
+                elem.children('span').html('');
+            } else {
+                elem.children('span').html(response);
+            }
         }
-    });
+    );
+}
+
+function unsetLike(elem) {
+    let url = elem.attr('data-unset');
+    let id = elem.attr('data-pid');
+
+    let req = sendRequest({post_id: id}, url);
+    req.then(
+        response => {
+            if (+response === 0) {
+                elem.children('span').html('');
+            } else {
+                elem.children('span').html(response);
+            }
+        }
+    );
 }
 
 $('.share').click(function () {
@@ -761,23 +749,20 @@ $('.pjax-container').on('click','.close__File',function (e) {
 function sendFriendRequest(e) {
     e.preventDefault();
     let elem = $(e.target);
-    let link = elem.attr('href');
+    let url = elem.attr('href');
+    let uid = elem.attr('data-uid');
 
-    $.ajax({
-        type: 'POST',
-        url: link,
-        headers: {
-            'X-CSRF-TOKEN': $('input[name="_token"]').attr('value')
-        },
-        success: function (data) {
+    let data = sendRequest({id: uid},url);
+    data.then(
+        success => {
             let wasSent = $('<div></div>')
                 .attr('class', 'request_sended')
-                .html('Request was sended');
+                .html('Запрос был отправлен');
             elem.replaceWith(wasSent);
         }
-    });
+    );
 
-    console.log('Request was sent');
+    console.log('Запрос отправлен');
 }
 
 /**
@@ -788,42 +773,36 @@ function sendFriendRequest(e) {
 function cancelFriendRequest(e) {
     e.preventDefault();
     let elem = $(e.target);
-    let link = elem.attr('href');
+    let url = elem.attr('href');
+    let uid = elem.attr('data-uid');
 
-    $.ajax({
-        type: 'POST',
-        url: link,
-        headers: {
-            'X-CSRF-TOKEN': $('input[name="_token"]').attr('value')
-        },
-        success: function (data) {
+    let data = sendRequest({id: uid}, url);
+    data.then(
+        success => {
             elem.parents('.friend__list__item').remove();
-            console.log('Request was deleted');
+            console.log('Запрос отклонен');
         }
-    });
+    );
 }
 
 /**
- * Cancel friend request
+ * Accept friend request
  *
  * @param e
  */
 function acceptFriendRequest(e) {
     e.preventDefault();
     let elem = $(e.target);
-    let link = elem.attr('href');
+    let url = elem.attr('href');
+    let uid = elem.attr('data-uid');
 
-    $.ajax({
-        type: 'POST',
-        url: link,
-        headers: {
-            'X-CSRF-TOKEN': $('input[name="_token"]').attr('value')
-        },
-        success: function (data) {
+    let data = sendRequest({id: uid}, url);
+    data.then(
+        success => {
             elem.parents('.friend__list__item').remove();
-            console.log('Friend was added!');
+            console.log('Пользователь добавлен в список друзей!');
         }
-    });
+    );
 }
 
 /**

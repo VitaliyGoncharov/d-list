@@ -1,36 +1,34 @@
 <?php
 namespace App\Http\Services;
 
-use App\Http\Interfaces\Services\IComment;
+use App\Models\Comment;
 
-class CommentService implements IComment
+/**
+ * @property Comment comment
+ */
+class CommentService
 {
-    public function __construct($comment)
+    /**
+     * CommentService constructor.
+     * @param Comment $comment
+     */
+    public function __construct(Comment $comment)
     {
         $this->comment = $comment;
     }
 
-    public function getComments(int $id,int $num = 1)
+    /**
+     * @param int $postId
+     * @param int $num
+     * @return mixed
+     */
+    public function getComments(int $postId,int $num)
     {
-        $comments = $this->comment->where('post_id',$id)
-            ->orderBy('created_at','DESC')
-            ->join('users','users.id','=','comments.user_id')
-            ->join('profile_link','profile_link.user_id','=','comments.user_id')
-            ->select(
-                'comments.id','comments.comment','comments.user_id','comments.post_id',
-                'comments.userRep_id','comments.created_at',
-                'users.surname','users.name','users.avatar',
-                'profile_link.link')
-            ->take($num)
-            ->get();
+        $comments = $this->comment->get($postId,$num);
 
-        if(!empty($comments[0]))
+        foreach ($comments as $comment)
         {
-            $comments = $comments[0];
-        }
-        else
-        {
-            $comments = false;
+            $comment->author = $comment->user();
         }
 
         return $comments;

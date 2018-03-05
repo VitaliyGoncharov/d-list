@@ -2,14 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Interfaces\Services\ICheckIfDisliked;
-use App\Http\Interfaces\Services\ICheckIfLiked;
-use App\Http\Interfaces\Services\IComment;
-use App\Http\Interfaces\Services\IDateTime;
+use App\Models\Post;
+use App\Http\Services\NewPostService;
+use App\Http\Services\PostService;
 use App\Http\Interfaces\Services\ILeftMenu;
-use App\Http\Interfaces\Services\INewPostInfo;
-use App\Http\Interfaces\Services\IPost;
-use Illuminate\Http\Request;
 use App\Http\Middleware\RedirectIfNotAuthenticated;
 
 
@@ -27,42 +23,55 @@ class NewsController extends Controller
     /**
      * Show the application dashboard.
      *
-     * @param IPost $IPost
+     * @param PostService $postSvc
      * @param ILeftMenu $ILeftMenu
-     * @param INewPostInfo $INewPostInfo
+     * @param NewPostService $newPostSvc
      * @return view ()
      */
-    public function index(IPost $IPost,ILeftMenu $ILeftMenu,INewPostInfo $INewPostInfo)
+    public function index(PostService $postSvc,NewPostService $newPostSvc,ILeftMenu $ILeftMenu)
     {
-        $posts = $IPost->get();
+        $posts = $postSvc->get();
 
-        // load profile link from `profile_link` table for left menu
         $leftMenuLinks = $ILeftMenu->getLinks();
 
         // check if user attached files to the new post which he didn't post
-        $addPostInfo = $INewPostInfo->getNewPostInfo();
+        $newPost = $newPostSvc->getNewPostInfo();
 
-        return view('news.main',compact('leftMenuLinks','posts','addPostInfo'));
+        return view('news.main',compact('leftMenuLinks','posts','newPost'));
     }
 
-    public function renderSearch(IPost $IPost,ILeftMenu $ILeftMenu)
+    public function renderSearch(PostService $postSvc,ILeftMenu $ILeftMenu)
     {
-        $posts = $IPost->get();
+        $posts = $postSvc->get();
 
-        // load profile link from `profile_link` table for left menu
         $leftMenuLinks = $ILeftMenu->getLinks();
 
         return view('news.search',compact('leftMenuLinks','posts'));
     }
 
+    public function search(Post $post, PostService $postSvc)
+    {
+        $keyWords = explode(' ', request()->input('keyWords'));
+
+        $posts = $postSvc->preparePosts($post->searchPostsByKeyWords($keyWords));
+
+        foreach ($posts as $post) {
+            foreach ($keyWords as $keyWord) {
+                $post->text = preg_replace('~('.$keyWord.')~',"<span class=\"highlight\">$1</span>",$post->text);
+            }
+        }
+
+        return view('post',compact('posts'));
+    }
+
     // load posts when user reach the end of web page
-    public function loadPostsCollection(IPost $IPost)
+    public function loadPostsCollection(PostService $postSvc)
     {
         // get last post id on the web page
         $lastPostId = request()->input('lastPostId');
 
         // get posts
-        $posts = $IPost->get(10,$lastPostId);
+        $posts = $postSvc->get(10,$lastPostId);
 
         // if there are no posts then exit
         if(!isset($posts[0])) {

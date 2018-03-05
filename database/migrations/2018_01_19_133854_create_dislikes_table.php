@@ -17,6 +17,7 @@ class CreateDislikesTable extends Migration
             $table->increments('id');
             $table->unsignedInteger('post_id');
             $table->unsignedInteger('user_id');
+            $table->primary(['post_id','user_id']);
         });
     }
 

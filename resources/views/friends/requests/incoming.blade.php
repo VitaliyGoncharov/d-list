@@ -13,7 +13,7 @@
                     <a class="friend_write_msg" href="/msg/write{{ $user->id }}">Написать сообщение</a>
                 </div>
 
-                <a class="accept_request" href="/friend/request/accept/{{ $user->id }}" onclick="acceptFriendRequest(event)">&#10003;</a>
+                <a class="accept_request" href="/friend/request/accept" onclick="acceptFriendRequest(event)" data-uid="{{ $user->id }}">&#10003;</a>
             </div>
         @endforeach
     </div>

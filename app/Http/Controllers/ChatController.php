@@ -29,7 +29,7 @@ class ChatController extends Controller
             exit;
         }
 
-        $profileLink = '/profile/'.$userRec->profileLink();
+        $profileLink = '/profile/'.$userRec->link;
 
         $from = Auth::user()->id;
 

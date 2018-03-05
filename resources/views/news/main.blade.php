@@ -13,10 +13,10 @@
             </div>
         </div>
 
-        @if(!empty($addPostInfo))
-            @if(!empty($addPostInfo['images']))
+        @if(!empty($newPost))
+            @if(!empty($newPost['images']))
                 <div class="attachedPhotosPreview">
-                    @foreach($addPostInfo['images'] as $image)
+                    @foreach($newPost['images'] as $image)
                         <div class="attachedPhotoWrap">
                             <span class="close close__addPost">&times;</span>
                             <img class="photoPreview" src="{{ $image }}" alt="">
@@ -26,10 +26,10 @@
             @endif
         @endif
 
-        @if(!empty($addPostInfo))
-            @if(!empty($addPostInfo['files']))
+        @if(!empty($newPost))
+            @if(!empty($newPost['files']))
                 <div id="uploadedFiles">
-                    @foreach($addPostInfo['files'] as $file)
+                    @foreach($newPost['files'] as $file)
                         <div class="uploadedFileWrap" data-src="{{ $file['src'] }}">
                             <img class="uploadedFileIcon" src="https://cdn.iconscout.com/public/images/icon/free/png-512/docs-document-file-data-google-suits-39cb6f3f9d29e942-512x512.png" alt="">
                             <span class="uploadedFilename">{{ $file['name'] }}</span>

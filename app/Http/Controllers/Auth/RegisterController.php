@@ -104,6 +104,8 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
+        $lastId = User::select('id')->take(1)->orderBy('id','DESC')->first();
+
         $birth = $data['year'] . '-' . $data['month'] . '-' . $data['day'];
 
         $push_to_user = [
@@ -113,6 +115,7 @@ class RegisterController extends Controller
             'password' => bcrypt($data['password']),
             'gender' => $data['gender'],
             'birth' => $birth,
+            'link' => 'id'.$lastId,
             'avatar' => 'http://dontfear.ru/wp-content/uploads/2014/07/4a0bf547e4d045c0f0557d33cd839f0b-300x300.png',
         ];
 
@@ -196,7 +199,7 @@ class RegisterController extends Controller
       $status = $sendMail->sendMailAction(
           $request->input('email'),
           $act_key,
-          $user->id,                
+          $user->id,
           $request->input('name'),
           $request->input('surname')
       );

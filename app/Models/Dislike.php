@@ -12,6 +12,16 @@ class Dislike extends Model
 
     public $timestamps = false;
 
+    public function checkIfExists(int $postId,int $userId)
+    {
+        $rec = $this->where([
+            ['post_id',$postId],
+            ['user_id',$userId]
+        ])->select('id')->first();
+
+        return $rec ? true : false;
+    }
+
     public function createByUserIdAndPostId(int $userId,int $postId)
     {
         $this->user_id = $userId;
@@ -31,11 +41,9 @@ class Dislike extends Model
 
     public function deleteByUserIdAndPostId(int $userId,int $postId)
     {
-        $this->where([
+        return $this->where([
             ['user_id',$userId],
             ['post_id',$postId]
         ])->delete();
-
-        return true;
     }
 }

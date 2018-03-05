@@ -15,24 +15,21 @@ class ProfileController extends Controller
         $this->middleware(RedirectIfNotAuthenticated::class);
     }
 
-    public function index($profileNameOrId,ILeftMenu $ILeftMenu)
+    public function index($profileNameOrId,ILeftMenu $ILeftMenu,User $user)
     {
-        $profileLink = ProfileLink::where('link',$profileNameOrId)->select('user_id','link')->get();
+        $userData = $user->findByLink($profileNameOrId);
 
-        if(isset($profileLink[0]))
+        if($userData)
         {
             $leftMenuLinks = $ILeftMenu->getLinks();
 
-            $user_id = $profileLink[0]->user_id;
+            // get the dat from bounded table `profile`
+            $userData->profile = $userData->profile();
 
-            $user = User::where('users.id',$user_id)
-                ->join('profile','profile.user_id','=','users.id')
-                ->select(
-                    'users.id','users.surname','users.name','users.birth','users.avatar',
-                    'profile.city','profile.school','profile.university'
-                )->firstOrFail();
-
-            return view('profile',compact('leftMenuLinks','user'));
+            return view('profile',[
+                'leftMenuLinks' => $leftMenuLinks,
+                'user' => $userData
+            ]);
         }
         else
         {

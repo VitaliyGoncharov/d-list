@@ -18,4 +18,23 @@ class File extends Model
             $model->created_at = $model->freshTimestamp();
         });
     }
+
+    public function get($src)
+    {
+        $filename = $this
+            ->where('src',$src)
+            ->select('filename')
+            ->first();
+
+        return $filename;
+    }
+
+    public function create($data)
+    {
+        foreach($data as $key => $value)
+        {
+            $this->{$key} = $value;
+        }
+        $this->save();
+    }
 }

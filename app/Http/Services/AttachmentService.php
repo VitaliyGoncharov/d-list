@@ -1,14 +1,13 @@
 <?php
 namespace App\Http\Services;
 
-use App\Http\Interfaces\Services\IAttachment;
-use App\Repositories\FileRepository;
+use App\Models\File;
 
-class AttachmentService implements IAttachment
+class AttachmentService
 {
-    public function __construct(FileRepository $fileRepository)
+    public function __construct(File $file)
     {
-        $this->fileRepository =  $fileRepository;
+        $this->file = $file;
     }
 
     public function get($post)
@@ -27,7 +26,7 @@ class AttachmentService implements IAttachment
 
             foreach($attachments->files as $file)
             {
-                $filename = $this->fileRepository->get($file)->filename;
+                $filename = $this->file->get($file)->filename;
 
                 $attachmentWithFilename = [
                     'src' => $file,

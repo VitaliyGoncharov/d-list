@@ -17,7 +17,7 @@
         <div class="post_content">
             @if($post->text)
                 <div class="post_text">
-                    {{ $post->text }}
+                    {!! $post->text !!}
                 </div>
             @endif
 
@@ -46,21 +46,19 @@
             @endif
 
             <div class="post_likes">
-                <div class="likes">
-                    <i class="fa fa-thumbs-up {{ !empty($post->liked) ? 'green' : '' }}" aria-hidden="true"></i>
+                <a class="likes" href="#" onclick="likeAction(event)" data-set="/like/add" data-unset="/like/delete" data-pid="{{ $post->id }}">
+                    <i class="fa fa-thumbs-up {{ $post->liked ? 'green' : '' }}" aria-hidden="true"></i>
 
-                    @if(isset($post->thumbsUp))
-                        <span class="{{ isset($post->liked) ? 'green' : '' }}">{{ $post->thumbsUp }}</span>
+                    <span class="{{ $post->liked ? 'green' : '' }}">{{ $post->likes ?: '' }}</span>
+                </a>
+
+                <a class="dislikes">
+                    <i class="fa fa-thumbs-down {{ !($post->disliked) ?: 'red' }}" aria-hidden="true"></i>
+
+                    @if($post->dislikes)
+                        <span class="{{ !($post->disliked) ?: 'red' }}">{{ $post->dislikes }}</span>
                     @endif
-                </div>
-
-                <div class="dislikes">
-                    <i class="fa fa-thumbs-down {{ !empty($post->disliked) ? 'red' : '' }}" aria-hidden="true"></i>
-
-                    @if(isset($post->thumbsDown))
-                        <span class="{{ isset($post->disliked) ? 'red' : '' }}">{{ $post->thumbsDown }}</span>
-                    @endif
-                </div>
+                </a>
 
                 <div class="share">
                     <i id="share" class="fa fa-bullhorn" aria-hidden="true"></i>
@@ -73,13 +71,14 @@
             </div>
         </div>
 
-        @if(!empty($post->comment))
+        @if(!empty($post->comments))
+            @foreach($post->comments as $comment)
             <div class="post_comments">
                 <div class="post_comment">
-                    <img src="{{ $post->comment->author->avatar }}" class="post_commenter_photo" alt="">
+                    <img src="{{ $comment->author->avatar }}" class="post_commenter_photo" alt="">
 
                     <div class="post_comment_author">
-                        <h5><a href="{{ '/profile/'.$post->comment->author->link }}" class="comment_author_a">{{ $post->comment->author->surname }} {{ $post->comment->author->name }}</a></h5>
+                        <h5><a href="{{ '/profile/'.$comment->author->link }}" class="comment_author_a">{{ $post->comment->author->surname }} {{ $post->comment->author->name }}</a></h5>
 
                         <div class="post_comment_content">
                             {{ $post->comment->comment }}
@@ -87,6 +86,7 @@
                     </div>
                 </div>
             </div>
+            @endforeach
         @endif
 
         <div class="add_comment">

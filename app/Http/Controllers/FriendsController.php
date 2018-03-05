@@ -30,18 +30,15 @@ class FriendsController extends Controller
         foreach ($friends_pairs as $friends_pair) {
             if ($friends_pair->user_id !== $userId) {
                 $friend_data = $user->get($friends_pair->user_id);
-                $friend_data->link = $friend_data->profileLink();
                 array_push($friends, $friend_data);
             }
 
             if ($friends_pair->friend_id !== $userId) {
                 $friend_data = $user->get($friends_pair->friend_id);
-                $friend_data->link = $friend_data->profileLink();
                 array_push($friends, $friend_data);
             }
         }
 
-        // load profile link from `profile_link` table for left menu
         $leftMenuLinks = $leftMenu->getLinks();
 
         return view('friends.main',compact('leftMenuLinks','friends'));
@@ -58,8 +55,6 @@ class FriendsController extends Controller
         $people = $user->getUsers(10);
 
         foreach ($people as $person) {
-            $person->link = $person->profileLink();
-
             $userReq = $request->checkIfExists($userId, $person->id);
 
             if ($userReq) {
@@ -70,15 +65,17 @@ class FriendsController extends Controller
         return view('friends.find',compact('leftMenuLinks','people'));
     }
 
-    public function sendRequest($to, FrdRequest $request)
+    public function sendRequest(FrdRequest $request)
     {
+        $to = request()->input('id');
         $userId = Auth::user()->id;
 
         return $request->add($userId, $to);
     }
 
-    public function acceptRequest($to, FrdRequest $request, Friend $friend)
+    public function acceptRequest(FrdRequest $request, Friend $friend)
     {
+        $to = request()->input('id');
         $userId = Auth::user()->id;
 
         $request->deleteRequest($userId, $to);
@@ -86,8 +83,9 @@ class FriendsController extends Controller
         return $friend->add($userId, $to);
     }
 
-    public function cancelRequest($to, FrdRequest $request)
+    public function cancelRequest(FrdRequest $request)
     {
+        $to = request()->input('id');
         $userId = Auth::user()->id;
 
         return $request->deleteRequest($userId, $to);
@@ -104,12 +102,10 @@ class FriendsController extends Controller
 
             foreach ($requests as $userRequest) {
                 $person = $user->get($userRequest->to);
-                $person->link = $person->profileLink();
                 array_push($users, $person);
             }
         }
 
-        // load profile link from `profile_link` table for left menu
         $leftMenuLinks = $leftMenu->getLinks();
 
         return view('friends.requests.outgoing', compact('leftMenuLinks','users'));
@@ -126,12 +122,10 @@ class FriendsController extends Controller
 
             foreach ($requests as $request) {
                 $person = $user->get($request->from);
-                $person->link = $person->profileLink();
                 array_push($users, $person);
             }
         }
 
-        // load profile link from `profile_link` table for left menu
         $leftMenuLinks = $leftMenu->getLinks();
 
         return view('friends.requests.incoming', compact('leftMenuLinks','users'));
@@ -139,17 +133,11 @@ class FriendsController extends Controller
 
     public function findUser(User $user)
     {
-        $key = request()->input('key');
-
-        $keys = explode(' ', $key);
+        $keys = explode(' ', request()->input('keyWords'));
 
         (count($keys) > 1) ? $multiple = true : $multiple = false;
 
-        $friends = $user->findUsersByExpression($keys, $multiple);
-
-        foreach ($friends as $friend) {
-            $friend->link = $friend->profileLink();
-        }
+        $friends = $user->findByNameOrSurname($keys, $multiple);
 
         return view('friends.friend',compact('friends'));
     }

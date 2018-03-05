@@ -2,21 +2,23 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Interfaces\Services\INewPostInfo;
-use App\Repositories\PostRepository;
+use App\Http\Services\NewPostService;
 use App\Models\Post;
-use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 
-
-class AddNewPostController extends Controller
+class NewPostController extends Controller
 {
-    public function addPost(PostRepository $postRepository,INewPostInfo $INewPostInfo)
+    public function __construct(Post $post,NewPostService $newPostSvc)
+    {
+        $this->post = $post;
+        $this->newPostSvc = $newPostSvc;
+    }
+
+    public function addPost()
     {
         $user_id = request()->user()->id;
         $message = request()->input('message');
 
-        $addPostInfo = $INewPostInfo->getNewPostInfo();
+        $addPostInfo = $this->newPostSvc->getNewPostInfo();
         $saveToPost = [
             'user_id' => $user_id,
             'text' => $message,
@@ -46,7 +48,7 @@ class AddNewPostController extends Controller
          */
         if($message || $photos || $attachments)
         {
-            $postRepository->create($saveToPost);
+            $this->post->create($saveToPost);
         }
         else
         {
@@ -62,12 +64,12 @@ class AddNewPostController extends Controller
 
         $user = $post->user()->where('id',$user_id)->first();
 
-        $profileLink = $user->profileLink();
+        $profileLink = $user->link;
 
         $posts = [];
         $new_post = (object)[
             'id' => $post->id,
-            'author' => (object) [
+            'author' => (object)[
                 'surname' => $user->surname,
                 'name' => $user->name,
                 'link' => $profileLink,
@@ -96,38 +98,38 @@ class AddNewPostController extends Controller
         echo $result;
     }
 
-    public function deleteAttachedPhoto(Request $request)
+    public function deleteAttachedPhoto()
     {
-        $photo_src = $request->input('src');
-        $photos = $request->session()->get('news.addPost.files');
+        $photo_src = request()->input('src');
+        $photos = request()->session()->get('news.addPost.files');
 
         foreach($photos as $key => $photo)
         {
             if($photo===$photo_src)
             {
-                $request->session()->forget('news.addPost.files');
+                request()->session()->forget('news.addPost.files');
                 unset($photos[$key]);
                 sort($photos);
-                $request->session()->put('news.addPost.files',$photos);
+                request()->session()->put('news.addPost.files',$photos);
                 echo 'Successfully deleted';
                 break;
             }
         }
     }
 
-    public function deleteAttachedFile(Request $request)
+    public function deleteAttachedFile()
     {
-        $file_src = $request->input('src');
-        $files = $request->session()->get('news.addPost.files');
+        $file_src = request()->input('src');
+        $files = request()->session()->get('news.addPost.files');
 
         foreach($files as $key => $file)
         {
             if($file===$file_src)
             {
-                $request->session()->forget('news.addPost.files');
+                request()->session()->forget('news.addPost.files');
                 unset($files[$key]);
                 sort($files);
-                $request->session()->put('news.addPost.files',$files);
+                request()->session()->put('news.addPost.files',$files);
                 echo 'Successfully deleted';
                 break;
             }

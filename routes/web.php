@@ -38,7 +38,7 @@ Route::post('password/reset','Auth\ResetPasswordController@reset')->name('passwo
 Route::group(['prefix' => 'news'], function () {
     Route::get('/','NewsController@index');
     Route::get('/search','NewsController@renderSearch');
-    Route::post('/search/{keys}','NewsController@searchNews');
+    Route::post('/search','NewsController@search');
 });
 
 Route::post('/saveutc','SaveUtcController@saveAction');
@@ -50,7 +50,7 @@ Route::post('/checkuserinput','Auth\CheckUserInputController@checkUserInput');
 
 Route::post('/uploadfiles','UploadFilesController@uploadFiles');
 
-Route::post('/addpost','AddNewPostController@addPost');
+Route::post('/addpost','NewPostController@addPost');
 Route::post('/loadpostscol','NewsController@loadPostsCollection');
 Route::post('/addcomment','AddCommentController@addComment');
 
@@ -66,14 +66,13 @@ Route::get('/msg/write{userId}','ChatController@index');
 
 Route::get('/friends','FriendsController@index');
 
-Route::group(['prefix' => 'friend'],function()
-{
+Route::group(['prefix' => 'friend'],function() {
     Route::get('search','FriendsController@showFoundUsers');
     Route::post('search','FriendsController@findUser');
 
-    Route::post('request/send/{userId}','FriendsController@sendRequest');
-    Route::post('request/accept/{userId}','FriendsController@acceptRequest');
-    Route::post('request/cancel/{userId}','FriendsController@cancelRequest');
+    Route::post('request/send','FriendsController@sendRequest');
+    Route::post('request/accept','FriendsController@acceptRequest');
+    Route::post('request/cancel','FriendsController@cancelRequest');
     Route::get('requests/outgoing','FriendsController@showOutgoingRequests');
     Route::get('requests/incoming','FriendsController@showIncomingRequests');
 });

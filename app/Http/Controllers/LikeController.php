@@ -4,60 +4,110 @@ namespace App\Http\Controllers;
 use App\Http\Services\ValidateService;
 use App\Models\Dislike;
 use App\Models\Like;
-use Illuminate\Support\Facades\Auth;
+use App\Models\Post;
 
+/**
+ * @property Like like
+ * @property Dislike dislike
+ * @property Post post
+ */
 class LikeController extends Controller
 {
-    public function __construct(Like $like,ValidateService $validateService)
+    /**
+     * LikeController constructor.
+     * @param Like $like
+     * @param Dislike $dislike
+     * @param Post $post
+     */
+    public function __construct(Like $like,Dislike $dislike,Post $post)
     {
         $this->like = $like;
-        $this->validateService = $validateService;
+        $this->dislike = $dislike;
+        $this->post = $post;
     }
 
-    public function add()
+    /**
+     * @param ValidateService $validateSvc
+     * @return string
+     */
+    public function add(ValidateService $validateSvc)
     {
-        // what a pity, it doesn't work in __constructor
-        $userId = Auth::user()->id;
+        $userId = request()->user()->id;
         $postId = request()->input('post_id');
 
         // check if string from client contain only digits (one or more)
-        if(!$this->validateService->validatePostId($postId))
+        if(!$validateSvc->validatePostId($postId))
             return 'Non-numeric postId';
 
-        // get Dislike model | check if dislike exists
-        $this->dislike = resolve(Dislike::class);
-        $ifDislikeExists = $this->checkIfDislikeExists($userId,$postId);
+        $dislikeExists = $this->checkIfDislikeExists($userId,$postId);
+
+        $postRec = $this->post->getPostById($postId);
 
         // if dislike exists we need to delete it
-        if($ifDislikeExists)
-            $this->dislike->deleteByUserIdAndPostId($userId,$postId);
+        if($dislikeExists)
+        {
+            if ($this->dislike->deleteByUserIdAndPostId($userId,$postId))
+                $this->decrementDislikesNum($postRec);
+        }
 
         // add like
-        if($this->like->createByUserIdAndPostId($userId,$postId))
-            return 'Like was added';
-        else
-            return 'Can\'t create new record in Like table';
+        if ($this->like->createByUserIdAndPostId($userId,$postId))
+            $likesNum = $this->incrementLikesNum($postRec);
+
+        return $likesNum;
     }
 
-    public function delete()
+    public function delete(ValidateService $validateSvc)
     {
-        $userId = Auth::user()->id;
+        $userId = request()->user()->id;
         $postId = request()->input('post_id');
 
-        if(!$this->validateService->validatePostId($postId))
+        if(!$validateSvc->validatePostId($postId))
             return 'Non-numeric postId';
 
-        if($this->like->deleteByUserIdAndPostId($userId,$postId))
-            return 'Like was deleted';
-        else
-            return 'Can\'t delete record from Like table';
+        $postRec = $this->post->getPostById($postId);
+
+        if ($this->like->deleteByUserIdAndPostId($userId,$postId))
+            $likesNum = $this->decrementLikesNum($postRec);
+
+        return $likesNum;
     }
 
+    /**
+     * @param $userId
+     * @param $postId
+     * @return bool
+     */
     public function checkIfDislikeExists($userId,$postId)
     {
-        if($this->dislike->getByUserIdAndPostId($userId,$postId))
-            return true;
-        else
-            return false;
+        $exists = $this->dislike->checkIfExists($userId,$postId);
+
+        return $exists;
+    }
+
+    public function decrementLikesNum($postRec)
+    {
+        $likesNum = $postRec->likes;
+        $likesNum--;
+
+        $this->post->updateLikesNum($postRec->id,$likesNum);
+        return $likesNum;
+    }
+
+    public function decrementDislikesNum($postRec)
+    {
+        $dislikesNum = $postRec->dislikes;
+        $dislikesNum--;
+
+        $this->post->updateDislikesNum($postRec->id,$dislikesNum);
+    }
+
+    public function incrementLikesNum($postRec)
+    {
+        $likesNum = $postRec->likes;
+        $likesNum++;
+
+        $this->post->updateLikesNum($postRec->id,$likesNum);
+        return $likesNum;
     }
 }
